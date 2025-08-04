@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import HowItWorksSection from "@/app/(components)/ui/Howitwork";
+import HowItWorksSection from "@/components/ui/Howitwork";
+import FeatureSection from "@/components/ui/FeaturesSection";
 import {
   CheckCircle,
   MessageSquare,
@@ -314,71 +315,6 @@ const featureItems = [
   },
 ];
 
-const FeaturesSection = () => (
-  <section id="features" className="py-20 sm:py-24 relative overflow-hidden">
-    {/* Moving background particles */}
-    <div className="absolute inset-0 -z-10">
-      {[...Array(15)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full bg-primary/10"
-          style={{
-            width: `${Math.random() * 80 + 20}px`,
-            height: `${Math.random() * 80 + 20}px`,
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-          }}
-          animate={{
-            y: [0, -100, 0],
-            x: [0, Math.random() * 100 - 50, 0],
-            rotate: [0, 360],
-            opacity: [0.1, 0.4, 0.1],
-          }}
-          transition={{
-            duration: Math.random() * 10 + 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-    </div>
-
-    {/* Gradient overlay */}
-    <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/80 to-background" />
-
-    <div className="container relative">
-      <div className="text-center max-w-2xl mx-auto">
-        <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-          Everything You Need to Scale
-        </h2>
-        <p className="mt-4 text-lg text-foreground/60">
-          Powerful features designed to put your growth on autopilot.
-        </p>
-      </div>
-      <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {featureItems.map((item, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="p-6 bg-card border border-border rounded-lg hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative backdrop-blur-sm"
-          >
-            <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary text-primary-foreground">
-              <item.icon className="h-6 w-6" />
-            </div>
-            <h3 className="mt-5 text-xl font-semibold text-card-foreground">
-              {item.title}
-            </h3>
-            <p className="mt-2 text-card-foreground/70">{item.description}</p>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
-
 const PricingSection = () => (
   <section id="pricing" className="py-20 sm:py-24 bg-secondary">
     <div className="container">
@@ -404,7 +340,7 @@ const PricingSection = () => (
             For creators getting started.
           </p>
           <p className="mt-6 text-4xl font-bold text-foreground">
-            $29
+            0.00
             <span className="text-lg font-medium text-foreground/50">/mo</span>
           </p>
           <ul className="mt-8 space-y-4 text-foreground/80">
@@ -413,14 +349,12 @@ const PricingSection = () => (
               Account
             </li>
             <li className="flex items-center gap-3">
-              <CheckCircle className="h-5 w-5 text-primary" /> DM & Comment
+              <CheckCircle className="h-5 w-5 text-primary" /> 10 DM & Comment
               Automation
             </li>
             <li className="flex items-center gap-3">
-              <CheckCircle className="h-5 w-5 text-primary" /> Post Scheduling
-            </li>
-            <li className="flex items-center gap-3">
-              <CheckCircle className="h-5 w-5 text-primary" /> Basic Analytics
+              <CheckCircle className="h-5 w-5 text-primary" /> 10 Post
+              Scheduling
             </li>
           </ul>
           <a
@@ -446,7 +380,7 @@ const PricingSection = () => (
             For professionals scaling their brand.
           </p>
           <p className="mt-6 text-4xl font-bold text-foreground">
-            $79
+            99.00
             <span className="text-lg font-medium text-foreground/50">/mo</span>
           </p>
           <ul className="mt-8 space-y-4 text-foreground/80">
@@ -487,7 +421,7 @@ const PricingSection = () => (
             For agencies managing clients.
           </p>
           <p className="mt-6 text-4xl font-bold text-foreground">
-            $149
+            1449
             <span className="text-lg font-medium text-foreground/50">/mo</span>
           </p>
           <ul className="mt-8 space-y-4 text-foreground/80">
@@ -770,7 +704,7 @@ const App = () => {
       <main>
         <HeroSection />
         <HowItWorksSection />
-        <FeaturesSection />
+        <FeatureSection />
         <PricingSection />
         <TestimonialsSection />
         {/* <FaqSection /> */}
