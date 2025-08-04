@@ -1,8 +1,8 @@
 "use client";
-import AuthenticationPage from "../(components)/ui/Login";
+import LoginPage from "@/components/ui/Auth";
 
 const page = () => {
-  return <AuthenticationPage />;
+  return <LoginPage />;
 };
 
 export default page;

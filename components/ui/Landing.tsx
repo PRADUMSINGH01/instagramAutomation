@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import HowItWorksSection from "@/app/(components)/ui/Howitwork";
 import {
   CheckCircle,
   MessageSquare,
@@ -19,100 +20,257 @@ import {
 
 const HeroSection = () => (
   <section className="relative py-20 sm:py-32 overflow-hidden">
-    {/* The new creative background component is added here */}
+    {/* Floating Instagram-themed elements */}
+    <div className="absolute inset-0 overflow-hidden z-0">
+      {/* Floating DM bubbles */}
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          initial={{
+            opacity: 0,
+            scale: 0,
+            x: Math.random() * 100,
+            y: Math.random() * 100,
+          }}
+          animate={{
+            opacity: [0, 0.8, 0],
+            scale: [0, 1, 0],
+            x: `calc(${Math.random() * 100}vw + ${i * 30}px)`,
+            y: `calc(${Math.random() * 100}vh + ${i * 20}px)`,
+            rotate: [0, i % 2 === 0 ? 15 : -15],
+          }}
+          transition={{
+            duration: 15 + Math.random() * 10,
+            repeat: Infinity,
+            delay: i * 0.5,
+            ease: "easeInOut",
+          }}
+        >
+          <svg
+            width="60"
+            height="60"
+            viewBox="0 0 24 24"
+            className="text-blue-500/20"
+          >
+            <path
+              fill="currentColor"
+              d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"
+            />
+          </svg>
+        </motion.div>
+      ))}
+
+      {/* Floating hearts */}
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          initial={{
+            opacity: 0,
+            scale: 0,
+            x: Math.random() * 100,
+            y: Math.random() * 100,
+          }}
+          animate={{
+            opacity: [0, 0.7, 0],
+            scale: [0, 1.2, 0],
+            y: `calc(${Math.random() * 100}vh + ${i * 40}px)`,
+          }}
+          transition={{
+            duration: 12 + Math.random() * 8,
+            repeat: Infinity,
+            delay: i * 0.8,
+            ease: "easeInOut",
+          }}
+        >
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            className="text-pink-500/20"
+          >
+            <path
+              fill="currentColor"
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+            />
+          </svg>
+        </motion.div>
+      ))}
+
+      {/* Instagram logo particles */}
+      {[...Array(12)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          initial={{
+            opacity: 0,
+            scale: 0,
+            x: Math.random() * 100,
+            y: Math.random() * 100,
+          }}
+          animate={{
+            opacity: [0, 0.4, 0],
+            scale: [0, 0.8, 0],
+            x: `calc(${Math.random() * 100}vw + ${i * 25}px)`,
+            rotate: [0, 360],
+          }}
+          transition={{
+            duration: 20 + Math.random() * 15,
+            repeat: Infinity,
+            delay: i * 0.3,
+            ease: "linear",
+          }}
+        >
+          <svg
+            width="30"
+            height="30"
+            viewBox="0 0 24 24"
+            className="text-purple-500/15"
+          >
+            <path
+              fill="currentColor"
+              d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"
+            />
+          </svg>
+        </motion.div>
+      ))}
+    </div>
+
+    {/* Gradient overlay */}
+    <div className="absolute inset-0 bg-gradient-to-br from-background via-transparent to-primary/5 z-1"></div>
+
     <div className="container text-center relative z-10">
       <motion.h1
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter text-foreground"
-        style={{ textShadow: "0 2px 10px rgba(0,0,0,0.2)" }} // Added text shadow for better readability
+        className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter text-foreground bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent"
       >
         Automate Your Instagram Engagement
       </motion.h1>
-      <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, delay: 0.4 }}
-        className="mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-foreground/80 bg-background/50 p-2 rounded-md backdrop-blur-sm"
+        className="mt-6 max-w-2xl mx-auto relative"
       >
-        Stop wasting time on repetitive tasks. Automate your DMs, posts, and
-        comments to grow your audience and build stronger connections, 24/7.
-      </motion.p>
+        <div className="absolute -inset-1 bg-primary/20 blur-2xl rounded-full"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-full"></div>
+        <motion.p
+          className="relative text-lg sm:text-xl text-foreground bg-background/80 p-6 rounded-2xl backdrop-blur-sm border border-primary/10 shadow-lg"
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
+          Stop wasting time on repetitive tasks. Automate your DMs, posts, and
+          comments to grow your audience and build stronger connections, 24/7.
+        </motion.p>
+      </motion.div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.6 }}
         className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
       >
-        <a
+        <motion.a
           href="#signup"
-          className="group inline-flex items-center justify-center px-8 py-3 text-base font-medium text-primary-foreground bg-primary rounded-md shadow-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all"
+          className="group inline-flex items-center justify-center px-8 py-3.5 text-base font-medium text-primary-foreground bg-gradient-to-r from-primary to-purple-600 rounded-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
           Start Your Free Trial
-          <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-        </a>
-        <a
-          href="#features"
-          className="inline-flex items-center justify-center px-8 py-3 text-base font-medium text-foreground bg-card rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"
-        >
-          Learn More
-        </a>
-      </motion.div>
-    </div>
-  </section>
-);
-
-const HowItWorksSection = () => (
-  <section id="how-it-works" className="py-20 sm:py-24 bg-secondary">
-    <div className="container">
-      <div className="text-center max-w-2xl mx-auto">
-        <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-          How It Works in 3 Simple Steps
-        </h2>
-        <p className="mt-4 text-lg text-foreground/60">
-          Get your Instagram on autopilot in minutes.
-        </p>
-      </div>
-      <div className="mt-16 grid md:grid-cols-3 gap-10 md:gap-8">
-        {[
-          {
-            icon: Zap,
-            title: "Connect Your Account",
-            description:
-              "Securely link your Instagram profile with our platform. It's fast, safe, and easy.",
-          },
-          {
-            icon: Repeat,
-            title: "Set Your Rules",
-            description:
-              "Customize your automation settings. Define keywords for comment replies, create DM templates, and schedule your posts.",
-          },
-          {
-            icon: Heart,
-            title: "Watch Your Growth",
-            description:
-              "Sit back and let InstaFlow engage with your audience, freeing you up to focus on creating amazing content.",
-          },
-        ].map((item, index) => (
-          <motion.div
-            key={item.title}
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.2 }}
-            className="text-center"
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 text-primary mx-auto">
-              <item.icon className="h-8 w-8" />
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </motion.a>
+
+        <motion.a
+          href="#features"
+          className="inline-flex items-center justify-center px-8 py-3.5 text-base font-medium text-foreground bg-card rounded-xl border border-primary/10 hover:bg-accent/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent backdrop-blur-sm"
+          whileHover={{
+            scale: 1.05,
+            background:
+              "linear-gradient(to right, var(--accent), var(--primary))",
+            color: "var(--primary-foreground)",
+          }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="mr-2 h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01" />
+          </svg>
+          Learn More
+        </motion.a>
+      </motion.div>
+
+      {/* Animated chat preview */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.8 }}
+        className="mt-16 mx-auto max-w-md bg-background/80 border border-primary/10 rounded-2xl backdrop-blur-sm shadow-xl overflow-hidden"
+      >
+        <div className="flex items-center p-3 border-b border-primary/10">
+          <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+          <div className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+          <div className="w-3 h-3 rounded-full bg-green-500"></div>
+          <div className="flex-1 text-center font-medium text-sm text-foreground/80">
+            Direct Message
+          </div>
+        </div>
+
+        <div className="p-4">
+          <div className="flex justify-start mb-3">
+            <div className="bg-gray-200 rounded-2xl rounded-bl-none px-4 py-2 max-w-[70%]">
+              <div className="h-2 w-20 bg-gray-400 rounded mb-1"></div>
+              <div className="h-2 w-16 bg-gray-400 rounded"></div>
             </div>
-            <h3 className="mt-6 text-xl font-semibold text-foreground">
-              {item.title}
-            </h3>
-            <p className="mt-2 text-foreground/60">{item.description}</p>
+          </div>
+
+          <motion.div
+            className="flex justify-end mb-3"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1.2 }}
+          >
+            <div className="bg-primary/10 rounded-2xl rounded-br-none px-4 py-2 max-w-[70%]">
+              <div className="h-2 w-24 bg-primary rounded mb-1"></div>
+              <div className="h-2 w-20 bg-primary rounded"></div>
+            </div>
           </motion.div>
-        ))}
-      </div>
+
+          <motion.div
+            className="flex justify-end"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1.5 }}
+          >
+            <div className="bg-primary text-primary-foreground rounded-2xl rounded-br-none px-4 py-2 max-w-[70%]">
+              <div className="h-2 w-16 bg-primary-foreground/80 rounded"></div>
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
     </div>
   </section>
 );
@@ -157,8 +315,38 @@ const featureItems = [
 ];
 
 const FeaturesSection = () => (
-  <section id="features" className="py-20 sm:py-24">
-    <div className="container">
+  <section id="features" className="py-20 sm:py-24 relative overflow-hidden">
+    {/* Moving background particles */}
+    <div className="absolute inset-0 -z-10">
+      {[...Array(15)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full bg-primary/10"
+          style={{
+            width: `${Math.random() * 80 + 20}px`,
+            height: `${Math.random() * 80 + 20}px`,
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+          }}
+          animate={{
+            y: [0, -100, 0],
+            x: [0, Math.random() * 100 - 50, 0],
+            rotate: [0, 360],
+            opacity: [0.1, 0.4, 0.1],
+          }}
+          transition={{
+            duration: Math.random() * 10 + 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </div>
+
+    {/* Gradient overlay */}
+    <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/80 to-background" />
+
+    <div className="container relative">
       <div className="text-center max-w-2xl mx-auto">
         <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
           Everything You Need to Scale
@@ -175,7 +363,7 @@ const FeaturesSection = () => (
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="p-6 bg-card border border-border rounded-lg hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            className="p-6 bg-card border border-border rounded-lg hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative backdrop-blur-sm"
           >
             <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary text-primary-foreground">
               <item.icon className="h-6 w-6" />
@@ -382,81 +570,81 @@ const TestimonialsSection = () => (
   </section>
 );
 
-const FaqSection = () => {
-  const faqItems = [
-    {
-      q: "Is it safe to connect my Instagram account?",
-      a: "Yes, absolutely. We use Instagram's official API for all interactions, ensuring your account is secure and compliant with their terms of service. We never ask for your password.",
-    },
-    {
-      q: "Can I customize the automated messages?",
-      a: "Of course. You have full control over all automated DMs and comments. You can create multiple templates and use personalization tags like [username] to make them feel authentic.",
-    },
-    {
-      q: "Will this get my account banned?",
-      a: "No. Our platform is designed to mimic human behavior and operates within Instagram's rate limits. We prioritize account safety above all else.",
-    },
-    {
-      q: "What if I want to cancel my subscription?",
-      a: "You can cancel your subscription at any time with just a few clicks from your account dashboard. No questions asked.",
-    },
-  ];
+// const FaqSection = () => {
+//   const faqItems = [
+//     {
+//       q: "Is it safe to connect my Instagram account?",
+//       a: "Yes, absolutely. We use Instagram's official API for all interactions, ensuring your account is secure and compliant with their terms of service. We never ask for your password.",
+//     },
+//     {
+//       q: "Can I customize the automated messages?",
+//       a: "Of course. You have full control over all automated DMs and comments. You can create multiple templates and use personalization tags like [username] to make them feel authentic.",
+//     },
+//     {
+//       q: "Will this get my account banned?",
+//       a: "No. Our platform is designed to mimic human behavior and operates within Instagram's rate limits. We prioritize account safety above all else.",
+//     },
+//     {
+//       q: "What if I want to cancel my subscription?",
+//       a: "You can cancel your subscription at any time with just a few clicks from your account dashboard. No questions asked.",
+//     },
+//   ];
 
-  const [openIndex, setOpenIndex] = useState(null);
+//   const [openIndex, setOpenIndex] = useState(null);
 
-  return (
-    <section id="faq" className="py-20 sm:py-24 bg-secondary">
-      <div className="container max-w-3xl mx-auto">
-        <div className="text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-            Frequently Asked Questions
-          </h2>
-        </div>
-        <div className="mt-12 space-y-4">
-          {faqItems.map((item, index) => (
-            <div
-              key={index}
-              className="border border-border rounded-lg bg-card overflow-hidden"
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full flex justify-between items-center p-6 text-left"
-              >
-                <span className="text-lg font-medium text-card-foreground">
-                  {item.q}
-                </span>
-                <motion.div animate={{ rotate: openIndex === index ? 45 : 0 }}>
-                  <X className="h-6 w-6 text-card-foreground/50" />
-                </motion.div>
-              </button>
-              <AnimatePresence>
-                {openIndex === index && (
-                  <motion.div
-                    initial="collapsed"
-                    animate="open"
-                    exit="collapsed"
-                    variants={{
-                      open: { opacity: 1, height: "auto" },
-                      collapsed: { opacity: 0, height: 0 },
-                    }}
-                    transition={{
-                      duration: 0.3,
-                      ease: [0.04, 0.62, 0.23, 0.98],
-                    }}
-                  >
-                    <div className="p-6 pt-0 text-card-foreground/70">
-                      <p>{item.a}</p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
+//   return (
+//     <section id="faq" className="py-20 sm:py-24 bg-secondary">
+//       <div className="container max-w-3xl mx-auto">
+//         <div className="text-center">
+//           <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
+//             Frequently Asked Questions
+//           </h2>
+//         </div>
+//         <div className="mt-12 space-y-4">
+//           {faqItems.map((item, index) => (
+//             <div
+//               key={index}
+//               className="border border-border rounded-lg bg-card overflow-hidden"
+//             >
+//               <button
+//                 onClick={() => setOpenIndex(openIndex === index ? 0 : index)}
+//                 className="w-full flex justify-between items-center p-6 text-left"
+//               >
+//                 <span className="text-lg font-medium text-card-foreground">
+//                   {item.q}
+//                 </span>
+//                 <motion.div animate={{ rotate: openIndex === index ? 45 : 0 }}>
+//                   <X className="h-6 w-6 text-card-foreground/50" />
+//                 </motion.div>
+//               </button>
+//               <AnimatePresence>
+//                 {openIndex === index && (
+//                   <motion.div
+//                     initial="collapsed"
+//                     animate="open"
+//                     exit="collapsed"
+//                     variants={{
+//                       open: { opacity: 1, height: "auto" },
+//                       collapsed: { opacity: 0, height: 0 },
+//                     }}
+//                     transition={{
+//                       duration: 0.3,
+//                       ease: [0.04, 0.62, 0.23, 0.98],
+//                     }}
+//                   >
+//                     <div className="p-6 pt-0 text-card-foreground/70">
+//                       <p>{item.a}</p>
+//                     </div>
+//                   </motion.div>
+//                 )}
+//               </AnimatePresence>
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+//     </section>
+//   );
+// };
 
 const Footer = () => (
   <footer className="bg-secondary border-t border-border">
@@ -585,7 +773,7 @@ const App = () => {
         <FeaturesSection />
         <PricingSection />
         <TestimonialsSection />
-        <FaqSection />
+        {/* <FaqSection /> */}
       </main>
       <Footer />
     </div>
