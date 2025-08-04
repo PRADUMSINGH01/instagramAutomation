@@ -2,8 +2,9 @@
 import { motion } from "framer-motion";
 import HowItWorksSection from "@/components/ui/Howitwork";
 import FeatureSection from "@/components/ui/FeaturesSection";
-import { CheckCircle, Twitter, Instagram, Linkedin } from "lucide-react";
-
+import { CheckCircle } from "lucide-react";
+import Navbar from "@/components/nav/Navbar";
+import Footer from "./Footer";
 // --- Page Sections ---
 
 const HeroSection = () => (
@@ -531,127 +532,11 @@ const TestimonialsSection = () => (
 //   );
 // };
 
-const Footer = () => (
-  <footer className="bg-secondary border-t border-border">
-    <div className="container py-12 lg:py-16">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        {/* Brand and Newsletter */}
-        <div className="md:col-span-1">
-          <div className="flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 256 256"
-              className="h-6 w-6 text-primary"
-            >
-              <rect width="256" height="256" fill="none"></rect>
-              <path
-                d="M128,88a40,40,0,1,0,40,40A40,40,0,0,0,128,88Z"
-                opacity="0.2"
-              ></path>
-              <path
-                d="M128,24A104,104,0,1,0,232,128,104.1,104.1,0,0,0,128,24Zm0,168a64,64,0,1,1,64-64A64.1,64.1,0,0,1,128,192Z"
-                fill="currentColor"
-              ></path>
-            </svg>
-            <span className="text-lg font-bold text-foreground">InstaFlow</span>
-          </div>
-          <p className="mt-4 text-sm text-foreground/60">
-            Your Instagram growth on autopilot.
-          </p>
-          <form className="mt-6 flex gap-2">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:ring-2 focus:ring-primary focus:outline-none"
-            />
-            <button
-              type="submit"
-              className="px-3 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 text-sm"
-            >
-              Subscribe
-            </button>
-          </form>
-        </div>
-
-        {/* Spacer */}
-        <div className="hidden md:block"></div>
-
-        {/* Links */}
-        <div className="grid grid-cols-2 md:col-span-2 gap-8">
-          <div>
-            <h4 className="font-semibold text-foreground">Product</h4>
-            <nav className="mt-4 flex flex-col gap-2">
-              <a
-                href="#features"
-                className="text-sm text-foreground/60 hover:text-foreground"
-              >
-                Features
-              </a>
-              <a
-                href="#pricing"
-                className="text-sm text-foreground/60 hover:text-foreground"
-              >
-                Pricing
-              </a>
-              <a
-                href="#testimonials"
-                className="text-sm text-foreground/60 hover:text-foreground"
-              >
-                Testimonials
-              </a>
-              <a
-                href="#faq"
-                className="text-sm text-foreground/60 hover:text-foreground"
-              >
-                FAQ
-              </a>
-            </nav>
-          </div>
-          <div>
-            <h4 className="font-semibold text-foreground">Legal</h4>
-            <nav className="mt-4 flex flex-col gap-2">
-              <a
-                href="#"
-                className="text-sm text-foreground/60 hover:text-foreground"
-              >
-                Terms of Service
-              </a>
-              <a
-                href="#"
-                className="text-sm text-foreground/60 hover:text-foreground"
-              >
-                Privacy Policy
-              </a>
-            </nav>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Bar */}
-      <div className="mt-12 pt-8 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between">
-        <p className="text-sm text-foreground/60">
-          &copy; {new Date().getFullYear()} InstaFlow. All rights reserved.
-        </p>
-        <div className="flex gap-4 mt-4 sm:mt-0">
-          <a href="#" className="text-foreground/60 hover:text-foreground">
-            <Twitter className="h-5 w-5" />
-          </a>
-          <a href="#" className="text-foreground/60 hover:text-foreground">
-            <Instagram className="h-5 w-5" />
-          </a>
-          <a href="#" className="text-foreground/60 hover:text-foreground">
-            <Linkedin className="h-5 w-5" />
-          </a>
-        </div>
-      </div>
-    </div>
-  </footer>
-);
-
 // --- Main App Component ---
 const App = () => {
   return (
     <div className="bg-background font-sans">
+      <Navbar />
       <main>
         <HeroSection />
         <HowItWorksSection />

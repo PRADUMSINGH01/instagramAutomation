@@ -192,7 +192,7 @@ const Navbar = () => {
           <DarkModeToggle />
 
           <a
-            href="/login"
+            href="/SignUp"
             className="px-4 py-2 rounded-md text-sm font-medium text-primary-foreground bg-gradient-to-r from-primary to-purple-600 hover:opacity-90 transition-opacity"
           >
             Get Started

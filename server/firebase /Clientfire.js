@@ -8,13 +8,13 @@ import { getAuth } from "firebase/auth";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyC1c1gBmc1qPZEYwbbDKvoyJtgzCawQPrw",
-  authDomain: "instagramauto-2bbce.firebaseapp.com",
-  projectId: "instagramauto-2bbce",
-  storageBucket: "instagramauto-2bbce.firebasestorage.app",
-  messagingSenderId: "408631545921",
-  appId: "1:408631545921:web:39b8c6e28d8786583af6c0",
-  measurementId: "G-0GHPQZWHCJ",
+  apiKey: process.env.APIKEY,
+  authDomain: process.env.AUTHDOMAIL,
+  projectId: process.env.PRODUCTID,
+  storageBucket: process.env.STORAGEBUCKET,
+  messagingSenderId: process.env.MESSAGINGSENDERID,
+  appId: process.env.APPID,
+  measurementId: process.env.MEASUREMENT,
 };
 
 // Initialize Firebase

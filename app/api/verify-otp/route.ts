@@ -1,11 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminAuth, adminDb } from "@/server/firebase /firebaseSetup"; // Use your Admin SDK setup
-
-/**
- * Verifies the Firebase ID token sent from the client.
- * If valid, it can create/update a user record in Firestore.
- * This is a secure, server-only operation.
- */
 export async function POST(req: NextRequest) {
   try {
     // --- 1. Extract Token ---
