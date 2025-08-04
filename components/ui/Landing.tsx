@@ -1,21 +1,8 @@
 "use client";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import HowItWorksSection from "@/components/ui/Howitwork";
 import FeatureSection from "@/components/ui/FeaturesSection";
-import {
-  CheckCircle,
-  MessageSquare,
-  Repeat,
-  Send,
-  Zap,
-  Heart,
-  ArrowRight,
-  X,
-  Twitter,
-  Instagram,
-  Linkedin,
-} from "lucide-react";
+import { CheckCircle, Twitter, Instagram, Linkedin } from "lucide-react";
 
 // --- Page Sections ---
 
@@ -276,45 +263,6 @@ const HeroSection = () => (
   </section>
 );
 
-const featureItems = [
-  {
-    icon: MessageSquare,
-    title: "Automated DMs",
-    description:
-      "Instantly welcome new followers, reply to story mentions, or send promotional messages with personalized templates.",
-  },
-  {
-    icon: Send,
-    title: "Scheduled Posts",
-    description:
-      "Plan your content calendar in advance. Schedule photos, videos, and carousels to post at peak engagement times.",
-  },
-  {
-    icon: Repeat,
-    title: "Smart Comment Replies",
-    description:
-      "Automatically reply to comments based on keywords. Filter out spam and engage with your most loyal fans.",
-  },
-  {
-    icon: CheckCircle,
-    title: "Lead Generation",
-    description:
-      "Use DM automation to capture leads, answer common questions, and guide users to your sales funnel.",
-  },
-  {
-    icon: Heart,
-    title: "Audience Engagement",
-    description:
-      "Never miss an interaction. Ensure every follower feels seen and heard, building a stronger community.",
-  },
-  {
-    icon: Zap,
-    title: "24/7 Activity",
-    description:
-      "Your account stays active even when you're not. Engage with users across different time zones effortlessly.",
-  },
-];
-
 const PricingSection = () => (
   <section id="pricing" className="py-20 sm:py-24 bg-secondary">
     <div className="container">
@@ -323,7 +271,8 @@ const PricingSection = () => (
           Simple, Transparent Pricing
         </h2>
         <p className="mt-4 text-lg text-foreground/60">
-          Choose the plan that's right for your growth goals. Cancel anytime.
+          Choose the plan that&quot;s right for your growth goals. Cancel
+          anytime.
         </p>
       </div>
       <div className="mt-16 grid lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
@@ -460,14 +409,16 @@ const TestimonialsSection = () => (
           Loved by Creators Worldwide
         </h2>
         <p className="mt-4 text-lg text-foreground/60">
-          Don't just take our word for it. Here's what our users say.
+          Don&quot;t just take our word for it. HereDon&quot;s what our users
+          say.
         </p>
       </div>
       <div className="mt-16 grid lg:grid-cols-2 gap-8">
         <div className="bg-card p-8 rounded-lg border border-border">
           <p className="text-card-foreground/80">
-            "InstaFlow has been a game-changer. I'm saving at least 10 hours a
-            week on DMs alone. My engagement has never been higher!"
+            &quot;InstaFlow has been a game-changer. I&quot;m saving at least 10
+            hours a week on DMs alone. My engagement has never been
+            higher!&quot;
           </p>
           <div className="mt-6 flex items-center gap-4">
             <img
@@ -483,9 +434,9 @@ const TestimonialsSection = () => (
         </div>
         <div className="bg-card p-8 rounded-lg border border-border">
           <p className="text-card-foreground/80">
-            "As a fitness coach, responding to every comment was impossible.
-            Now, InstaFlow handles the common questions, and I can focus on my
-            clients."
+            &quot;As a fitness coach, responding to every comment was
+            impossible. Now, InstaFlow handles the common questions, and I can
+            focus on my clients.&quot;
           </p>
           <div className="mt-6 flex items-center gap-4">
             <img

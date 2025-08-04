@@ -41,15 +41,24 @@ export async function POST(req: NextRequest) {
       message: "User authenticated successfully.",
       uid: uid,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Login API Error:", error);
 
     let message = "An unexpected error occurred during login.";
-    // Handle specific Firebase Admin errors
-    if (error.code === "auth/id-token-expired") {
-      message = "Your session has expired. Please log in again.";
-    } else if (error.code === "auth/argument-error") {
-      message = "The provided token is invalid.";
+
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      typeof error.code === "string"
+    ) {
+      const code = (error as { code: string }).code;
+
+      if (code === "auth/id-token-expired") {
+        message = "Your session has expired. Please log in again.";
+      } else if (code === "auth/argument-error") {
+        message = "The provided token is invalid.";
+      }
     }
 
     return NextResponse.json(

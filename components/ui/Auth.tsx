@@ -6,41 +6,47 @@ import {
   signInWithPhoneNumber,
   ConfirmationResult,
 } from "firebase/auth";
-import { auth } from "@/server/firebase /Clientfire"; // Adjust this import path to your file
+import { auth } from "@/server/firebase /Clientfire";
+import { FirebaseError } from "firebase/app";
 
 // Import the phone number input component and its styles
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 
+// Extend the global Window interface for recaptchaVerifier
+declare global {
+  interface Window {
+    recaptchaVerifier?: RecaptchaVerifier;
+  }
+}
+
 // --- Main Login Component ---
 export default function LoginPage() {
   // --- State Management ---
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>("");
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState<string>("");
   const [confirmationResult, setConfirmationResult] =
     useState<ConfirmationResult | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [timer, setTimer] = useState(60); // 60-second timer for OTP
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [isOtpSent, setIsOtpSent] = useState<boolean>(false);
+  const [timer, setTimer] = useState<number>(60);
 
   // Ref for the reCAPTCHA container
   const recaptchaContainerRef = useRef<HTMLDivElement>(null);
 
   // --- Effects ---
-
-  // Initialize reCAPTCHA verifier on component mount
   useEffect(() => {
     if (!recaptchaContainerRef.current) return;
 
     try {
-      if (!(window as any).recaptchaVerifier) {
-        (window as any).recaptchaVerifier = new RecaptchaVerifier(
+      if (!window.recaptchaVerifier) {
+        window.recaptchaVerifier = new RecaptchaVerifier(
           auth,
           recaptchaContainerRef.current,
           {
             size: "invisible",
-            callback: (response: any) => {
+            callback: () => {
               console.log("reCAPTCHA verified.");
             },
             "expired-callback": () => {
@@ -49,7 +55,7 @@ export default function LoginPage() {
           }
         );
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("reCAPTCHA initialization error:", err);
       setError("Could not initialize verification. Please refresh.");
     }
@@ -60,24 +66,21 @@ export default function LoginPage() {
     let interval: NodeJS.Timeout;
     if (isOtpSent && timer > 0) {
       interval = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
+        setTimer((prev) => prev - 1);
       }, 1000);
     } else if (timer === 0) {
-      setIsOtpSent(true); // Keep the OTP screen open
+      setIsOtpSent(true);
     }
     return () => clearInterval(interval);
   }, [isOtpSent, timer]);
 
   // --- Helper Functions ---
-
   const resetState = () => {
     setError("");
     setLoading(false);
   };
 
   // --- API Handlers ---
-
-  // 1. Function to Send or Resend OTP
   const handleSendOtp = async (e?: React.FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
     resetState();
@@ -89,20 +92,25 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      const verifier = (window as any).recaptchaVerifier;
+      const verifier = window.recaptchaVerifier!;
       const result = await signInWithPhoneNumber(auth, phoneNumber, verifier);
       setConfirmationResult(result);
       setIsOtpSent(true);
-      setTimer(60); // Reset timer on new OTP request
-    } catch (err: any) {
+      setTimer(60);
+    } catch (err: unknown) {
       console.error("Error sending OTP:", err);
-      setError(err.message || "Failed to send OTP. Please try again.");
+      if (err instanceof FirebaseError) {
+        setError(err.message);
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Failed to send OTP. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // 2. Function to Verify OTP and Login
   const handleVerifyOtp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     resetState();
@@ -121,8 +129,7 @@ export default function LoginPage() {
       const userCredential = await confirmationResult.confirm(otp);
       const idToken = await userCredential.user.getIdToken();
 
-      const response = await fetch("/api/verify-otp", {
-        // Ensure this API route exists
+      const apiResponse = await fetch("/api/verify-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -130,20 +137,24 @@ export default function LoginPage() {
         },
       });
 
-      const data = await response.json();
+      const data = await apiResponse.json();
 
-      if (response.ok && data.success) {
-        // On success, redirect or update UI.
-        window.location.href = "/dashboard"; // Example redirect
+      if (apiResponse.ok && data.success) {
+        window.location.href = "/dashboard";
       } else {
         throw new Error(data.message || "Server-side validation failed.");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error verifying OTP:", err);
-      if (err.code === "auth/invalid-verification-code") {
+      if (
+        err instanceof FirebaseError &&
+        err.code === "auth/invalid-verification-code"
+      ) {
         setError("The OTP you entered is incorrect. Please try again.");
+      } else if (err instanceof Error) {
+        setError(err.message);
       } else {
-        setError(err.message || "Failed to verify OTP.");
+        setError("Failed to verify OTP.");
       }
     } finally {
       setLoading(false);
@@ -205,7 +216,6 @@ export default function LoginPage() {
           </form>
         )}
 
-        {/* Timer and Resend OTP Logic */}
         {isOtpSent && (
           <div className="text-center mt-6 text-sm">
             {timer > 0 ? (
@@ -225,10 +235,8 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Essential reCAPTCHA container */}
         <div ref={recaptchaContainerRef}></div>
 
-        {/* Error Display */}
         {error && (
           <p className="mt-4 text-center text-sm font-medium text-red-600 animate-pulse">
             {error}
@@ -237,7 +245,6 @@ export default function LoginPage() {
       </div>
 
       <style jsx global>{`
-        /* Custom styles for react-phone-number-input */
         .PhoneInput {
           width: 100%;
           display: flex;
@@ -248,8 +255,8 @@ export default function LoginPage() {
           width: 100%;
           padding: 0.75rem 1rem;
           border-radius: 0.375rem;
-          background-color: #f9fafb; /* gray-50 */
-          border: 1px solid #e5e7eb; /* gray-200 */
+          background-color: #f9fafb;
+          border: 1px solid #e5e7eb;
           transition: all 0.2s;
           font-size: 1rem;
         }
