@@ -3,16 +3,14 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 
-
-
 const firebaseConfig = {
-  apiKey:"AIzaSyC1c1gBmc1qPZEYwbbDKvoyJtgzCawQPrw",
-  authDomain:"instagramauto-2bbce.firebaseapp.com",
-  projectId:"instagramauto-2bbce",
-  storageBucket:"instagramauto-2bbce.firebasestorage.app",
-  messagingSenderId:"408631545921",
-  appId:"1:408631545921:web:39b8c6e28d8786583af6c0",
-  measurementId:"G-0GHPQZWHCJ",
+  apiKey: process.env.NEXTAPIKEY,
+  authDomain: process.env.NEXTAUTHDOMAIL,
+  projectId: process.env.NEXTPRODUCTID,
+  storageBucket: process.env.NEXTSTORAGEBUCKET,
+  messagingSenderId: process.env.NEXTMESSAGINGSENDERID,
+  appId: process.env.NEXTAPPID,
+  measurementId: process.env.NEXTMEASUREMENT,
 };
 
 // Initialize Firebase
