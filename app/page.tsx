@@ -35,7 +35,7 @@ const InstagramAutomationLanding = () => {
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Instagram className="text-pink-500" size={28} />
-            <span className="text-xl font-bold">InstaFlow</span>
+            <span className="text-xl font-bold">Zapchat</span>
           </div>
 
           <div className="hidden md:flex space-x-8">
@@ -501,7 +501,7 @@ const InstagramAutomationLanding = () => {
             <div className="md:col-span-2">
               <div className="flex items-center space-x-2 mb-6">
                 <Instagram className="text-pink-500" size={28} />
-                <span className="text-xl font-bold text-white">InstaFlow</span>
+                <span className="text-xl font-bold text-white">Zapchat</span>
               </div>
               <p className="mb-6 max-w-xs">
                 Automate your Instagram DMs and comments to save time and grow
@@ -516,7 +516,7 @@ const InstagramAutomationLanding = () => {
                   {column.links.map((link, i) => (
                     <li key={i}>
                       <a
-                        href="#"
+                        href={`/${link}`}
                         className="hover:text-pink-500 transition-colors"
                       >
                         {link}
@@ -529,15 +529,21 @@ const InstagramAutomationLanding = () => {
           </div>
 
           <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p>© 2025 InstaFlow. All rights reserved.</p>
+            <p>© 2025 Zapchat. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="hover:text-pink-500 transition-colors">
+              <a
+                href="/policy"
+                className="hover:text-pink-500 transition-colors"
+              >
                 Privacy Policy
               </a>
-              <a href="#" className="hover:text-pink-500 transition-colors">
+              <a href="/term" className="hover:text-pink-500 transition-colors">
                 Terms of Service
               </a>
-              <a href="#" className="hover:text-pink-500 transition-colors">
+              <a
+                href="/policy"
+                className="hover:text-pink-500 transition-colors"
+              >
                 Cookie Policy
               </a>
             </div>
@@ -651,7 +657,7 @@ const plans = [
     features: [
       "1 Instagram account",
       "100 automated DMs/month",
-      "Comment automation",
+      "1000 Comment automation",
       "Basic templates",
       "Email support",
     ],
@@ -661,21 +667,24 @@ const plans = [
     price: "449",
     features: [
       "3 Instagram accounts",
-      "Unlimited DMs",
-      "Advanced comment management",
-      "AI-powered responses",
+      "1000 Unlimited DMs",
+      "5000 Advanced comment management",
       "Priority support",
+      "Call support",
+      "Email support",
     ],
   },
   {
     name: "Business",
     price: "1999",
     features: [
-      "10 Instagram accounts",
+      "5 Instagram accounts",
       "Unlimited DMs & comments",
       "Team collaboration",
-      "Custom AI training",
+      "AI-powered responses",
       "Dedicated account manager",
+      "Call support",
+      "Email support + Live Chat",
     ],
   },
 ];

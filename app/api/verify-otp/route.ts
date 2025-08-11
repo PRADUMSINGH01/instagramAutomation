@@ -42,26 +42,24 @@ export async function POST(req: NextRequest) {
         phoneNumber: phone_number || null,
         displayName: decodedToken.name || "",
         lastLoginAt: new Date().toISOString(),
+        trail: false,
+        plans: {
+          expiredata: false,
+          price: 0,
+          paymentId: false,
+        },
+        APIUsages: {},
       },
       { merge: true }
     );
 
     // --- 5. Fetch Updated User Data ---
-    const userDoc = await userRef.get();
-    const userData = userDoc.data();
 
     // --- 6. Success Response ---
     return NextResponse.json(
       {
         success: true,
         accessToken: accessToken,
-        user: {
-          uid: uid,
-          email: userData?.email || null,
-          phone: userData?.phoneNumber || null,
-          name: userData?.displayName || null,
-          lastLogin: userData?.lastLoginAt || null,
-        },
       },
       { status: 200 }
     );
