@@ -33,28 +33,28 @@ const Page = () => {
     { 
       name: "Instagram", 
       Icon: Instagram, 
-      href: "/automation/instagram",
+      href: "/dashboard/automation/Instagram",
       color: "bg-gradient-to-r from-pink-500 to-rose-600",
       description: "Schedule posts and stories"
     },
     { 
       name: "WhatsApp", 
       Icon: MessageSquare, 
-      href: "/automation/whatsapp",
+      href: "/dashboard/automation/Whatsapp",
       color: "bg-gradient-to-r from-green-500 to-emerald-600",
       description: "Automate messages and campaigns"
     },
     { 
       name: "Twitter", 
       Icon: Twitter, 
-      href: "/automation/twitter",
+      href: "/dashboard/automation/Twitter",
       color: "bg-gradient-to-r from-sky-400 to-blue-600",
       description: "Schedule tweets and threads"
     },
     { 
       name: "LinkedIn", 
       Icon: Linkedin, 
-      href: "/automation/linkedin",
+      href: "/dashboard/automation/Linkedin",
       color: "bg-gradient-to-r from-blue-700 to-indigo-800",
       description: "Automate posts and engagement"
     }
