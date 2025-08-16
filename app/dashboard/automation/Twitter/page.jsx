@@ -1,14 +1,20 @@
 "use client";
+import { useSession, signIn, signOut } from "next-auth/react";
 
-import { signIn } from "next-auth/react";
+export default function TwitterButton() {
+  const { data: session } = useSession();
 
-export default function TwitterLoginButton() {
+  if (!session) {
+    return (
+      <button onClick={() => signIn("twitter")}>Login with Twitter</button>
+    );
+  }
+
   return (
-    <button
-      onClick={() => signIn("twitter")}
-      className="px-4 py-2 bg-[#1DA1F2] text-white rounded-lg hover:bg-[#1a8cd8] transition"
-    >
-      Connect Twitter
-    </button>
+    <div>
+      <p>Logged in as {session.user?.name}</p>
+      <p>Access Token: {session.accessToken}</p>
+      <button onClick={() => signOut()}>Logout</button>
+    </div>
   );
 }
