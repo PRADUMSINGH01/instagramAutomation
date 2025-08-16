@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth from "next-auth/next";
 import TwitterProvider from "next-auth/providers/twitter";
 
 const handler = NextAuth({
