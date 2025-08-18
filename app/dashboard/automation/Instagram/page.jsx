@@ -39,7 +39,7 @@ import COMMENT_AUTOMATION from "@/components/Instagram/commentauto";
 // FILE: src/constants/index.js
 // ============================================================================
 
-export const PATHS = {
+const PATHS = {
   DASHBOARD: "/",
   INSTAGRAM: "/instagram",
   DM_AUTOMATION: "/dm-automation",
@@ -47,8 +47,7 @@ export const PATHS = {
   COMMENT_AUTOMATION: "/comment-automation",
   SETTINGS: "/settings",
 };
-
-export const NAV_ITEMS = [
+const NAV_ITEMS = [
   { icon: LayoutDashboard, label: "Dashboard", path: PATHS.DASHBOARD },
   { icon: Instagram, label: "Instagram", path: PATHS.INSTAGRAM },
   { icon: MessageCircle, label: "DM Automation", path: PATHS.DM_AUTOMATION },
@@ -67,7 +66,7 @@ export const NAV_ITEMS = [
 
 const AppContext = createContext();
 
-export const AppProvider = ({ children }) => {
+const AppProvider = ({ children }) => {
   const [user] = useState({ name: "Sarah Johnson", plan: "Premium" });
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -103,7 +102,7 @@ export const AppProvider = ({ children }) => {
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
-export const useAppContext = () => useContext(AppContext);
+const useAppContext = () => useContext(AppContext);
 
 // ============================================================================
 // FILE: src/components/ui/Card.jsx
@@ -129,7 +128,7 @@ const Card = ({ children, className = "" }) => (
  * A responsive modal dialog component.
  * @param {{isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode}} props
  */
-export const Modal = ({ isOpen, onClose, title, children }) => {
+const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4">
@@ -157,7 +156,7 @@ export const Modal = ({ isOpen, onClose, title, children }) => {
  * Displays a single statistic with an icon, label, value, and change.
  * @param {{icon: React.ElementType, label: string, value: string, change: string, isLoading: boolean}} props
  */
-export const StatCard = ({ icon: Icon, label, value, change, isLoading }) => {
+const StatCard = ({ icon: Icon, label, value, change, isLoading }) => {
   if (isLoading) return <StatCard.Skeleton />;
 
   return (
@@ -197,12 +196,7 @@ StatCard.Skeleton = () => (
  * A header for a page section with a title, icon, and optional action button.
  * @param {{icon: React.ElementType, title: string, actionText?: string, onActionClick?: () => void}} props
  */
-export const SectionHeader = ({
-  icon: Icon,
-  title,
-  actionText,
-  onActionClick,
-}) => (
+const SectionHeader = ({ icon: Icon, title, actionText, onActionClick }) => (
   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
     <h2 className="text-2xl font-bold flex items-center gap-3">
       <Icon className="w-7 h-7 text-black" />
