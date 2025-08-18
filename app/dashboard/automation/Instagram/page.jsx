@@ -1,742 +1,559 @@
-// src/app/page.jsx
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import {
-  FiMessageSquare,
-  FiFileText,
-  FiSend,
-  FiSettings,
-  FiPlus,
-  FiFilter,
-  FiSearch,
-  FiX,
-  FiChevronDown,
-  FiActivity,
-  FiUsers,
-  FiBarChart2,
-} from "react-icons/fi";
-import {
-  FaRegPauseCircle,
-  FaRegPlayCircle,
-  FaRegEdit,
-  FaRegTrashAlt,
-  FaRegCommentDots,
-  FaRegPaperPlane,
-} from "react-icons/fa";
-import ConnectInstagramButton from "@/components/buttoms/InstagramAuthButton";
-const AutomationDashboard = () => {
-  const [activeTab, setActiveTab] = useState("comment");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedPost, setSelectedPost] = useState(null);
-  const [triggerType, setTriggerType] = useState("keyword");
-  const [triggerValue, setTriggerValue] = useState("");
-  const [actionType, setActionType] = useState("reply");
-  const [actionContent, setActionContent] = useState("");
+  LayoutDashboard,
+  Instagram,
+  MessageCircle,
+  FileText,
+  MessageSquare,
+  Settings,
+  User,
+  ChevronDown,
+  Check,
+  X,
+  Plus,
+  Search,
+  Bell,
+  BarChart2,
+  Send,
+  Calendar,
+  MessageSquareMore,
+  ArrowRight,
+  ChevronRight,
+  Mail,
+  Image,
+  ThumbsUp,
+  List,
+  Link as LinkIcon,
+  Globe,
+  Bookmark,
+  LogOut,
+  Loader2,
+  AlertTriangle,
+  Menu,
+} from "lucide-react";
+import DM_AUTOMATION from "@/components/Instagram/dmauto";
+import POST_AUTOMATION from "@/components/Instagram/postauto";
+import COMMENT_AUTOMATION from "@/components/Instagram/commentauto";
+// ============================================================================
+// FILE: src/constants/index.js
+// ============================================================================
 
-  // Mock data for posts
-  const posts = [
-    {
-      id: 1,
-      title: "The Future of AI in Marketing",
-      content:
-        "Exploring how artificial intelligence is transforming digital marketing strategies.",
-      date: "2023-10-15",
-      likes: 245,
-      comments: 32,
-      platform: "Twitter",
-    },
-    {
-      id: 2,
-      title: "Summer Product Launch",
-      content:
-        "Introducing our new summer collection with innovative features.",
-      date: "2023-09-22",
-      likes: 189,
-      comments: 24,
-      platform: "Instagram",
-    },
-    {
-      id: 3,
-      title: "Company Culture Insights",
-      content:
-        "How we maintain a positive work environment in remote settings.",
-      date: "2023-10-05",
-      likes: 321,
-      comments: 41,
-      platform: "LinkedIn",
-    },
-    {
-      id: 4,
-      title: "Industry Trends Report",
-      content: "Quarterly analysis of emerging trends in our industry.",
-      date: "2023-09-30",
-      likes: 178,
-      comments: 19,
-      platform: "Facebook",
-    },
-  ];
+export const PATHS = {
+  DASHBOARD: "/",
+  INSTAGRAM: "/instagram",
+  DM_AUTOMATION: "/dm-automation",
+  POST_AUTOMATION: "/post-automation",
+  COMMENT_AUTOMATION: "/comment-automation",
+  SETTINGS: "/settings",
+};
 
-  const [automations, setAutomations] = useState([
-    {
-      id: 1,
-      post: "The Future of AI in Marketing",
-      trigger: 'Keyword: "AI strategy"',
-      action: "Reply with resources",
-      status: "active",
-      date: "2023-10-15",
-      type: "comment",
-    },
-    {
-      id: 2,
-      post: "Summer Product Launch",
-      trigger: "Question about pricing",
-      action: "Send pricing sheet",
-      status: "paused",
-      date: "2023-09-22",
-      type: "comment",
-    },
-    {
-      id: 3,
-      post: "Company Culture Insights",
-      trigger: "Positive feedback",
-      action: "Thank + offer discount",
-      status: "active",
-      date: "2023-10-05",
-      type: "comment",
-    },
-    {
-      id: 4,
-      post: "Industry Trends Report",
-      trigger: "Request for data sources",
-      action: "Send methodology doc",
-      status: "active",
-      date: "2023-09-30",
-      type: "comment",
-    },
-  ]);
+export const NAV_ITEMS = [
+  { icon: LayoutDashboard, label: "Dashboard", path: PATHS.DASHBOARD },
+  { icon: Instagram, label: "Instagram", path: PATHS.INSTAGRAM },
+  { icon: MessageCircle, label: "DM Automation", path: PATHS.DM_AUTOMATION },
+  { icon: FileText, label: "Post Automation", path: PATHS.POST_AUTOMATION },
+  {
+    icon: MessageSquare,
+    label: "Comment Automation",
+    path: PATHS.COMMENT_AUTOMATION,
+  },
+  { icon: Settings, label: "Settings", path: PATHS.SETTINGS },
+];
 
-  const toggleAutomationStatus = (id) => {
-    setAutomations(
-      automations.map((auto) =>
-        auto.id === id
-          ? { ...auto, status: auto.status === "active" ? "paused" : "active" }
-          : auto
-      )
-    );
+// ============================================================================
+// FILE: src/context/AppContext.jsx
+// ============================================================================
+
+const AppContext = createContext();
+
+export const AppProvider = ({ children }) => {
+  const [user] = useState({ name: "Sarah Johnson", plan: "Premium" });
+  const [isConnected, setIsConnected] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [activePage, setActivePage] = useState(PATHS.DASHBOARD);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const handleConnect = () => {
+    if (isConnected) return;
+    setIsConnecting(true);
+    setTimeout(() => {
+      setIsConnected(true);
+      setIsConnecting(false);
+    }, 1500);
   };
 
-  const deleteAutomation = (id) => {
-    setAutomations(automations.filter((auto) => auto.id !== id));
+  const handleDisconnect = () => setIsConnected(false);
+  const closeSidebar = () => setIsSidebarOpen(false);
+  const toggleSidebar = () => setIsSidebarOpen((prevState) => !prevState);
+
+  const value = {
+    user,
+    isConnected,
+    isConnecting,
+    handleConnect,
+    handleDisconnect,
+    activePage,
+    setActivePage,
+    isSidebarOpen,
+    closeSidebar,
+    toggleSidebar,
   };
 
-  const openNewAutomation = () => {
-    setIsModalOpen(true);
-  };
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+};
 
-  const handleCreateAutomation = () => {
-    if (!selectedPost || !triggerValue || !actionContent) {
-      alert("Please fill all required fields");
-      return;
-    }
+export const useAppContext = () => useContext(AppContext);
 
-    const newAutomation = {
-      id: automations.length + 1,
-      post: selectedPost.title,
-      trigger: `${
-        triggerType === "keyword" ? "Keyword" : "Question type"
-      }: "${triggerValue}"`,
-      action: `${
-        actionType === "reply" ? "Reply" : "Send message"
-      }: ${actionContent.substring(0, 20)}...`,
-      status: "active",
-      date: new Date().toISOString().split("T")[0],
-      type: "comment",
-    };
+// ============================================================================
+// FILE: src/components/ui/Card.jsx
+// ============================================================================
 
-    setAutomations([...automations, newAutomation]);
-    setIsModalOpen(false);
+/**
+ * A reusable card component with consistent styling.
+ * @param {{children: React.ReactNode, className?: string}} props
+ */
+const Card = ({ children, className = "" }) => (
+  <div
+    className={`border border-dotted border-black rounded-xl bg-white p-6 ${className}`}
+  >
+    {children}
+  </div>
+);
 
-    // Reset form
-    setSelectedPost(null);
-    setTriggerType("keyword");
-    setTriggerValue("");
-    setActionType("reply");
-    setActionContent("");
-  };
+// ============================================================================
+// FILE: src/components/ui/Modal.jsx
+// ============================================================================
 
-  // Filter automations by type
-  const filteredAutomations = automations.filter(
-    (auto) => auto.type === activeTab
-  );
-
+/**
+ * A responsive modal dialog component.
+ * @param {{isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode}} props
+ */
+export const Modal = ({ isOpen, onClose, title, children }) => {
+  if (!isOpen) return null;
   return (
-    <div className="flex min-h-screen bg-gray-50 text-gray-800">
-      {/* Sidebar */}
-      <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-200">
-          <ConnectInstagramButton />
-        </div>
-
-        <nav className="flex-1 py-4">
+    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4">
+      <div className="bg-white rounded-xl border border-dotted border-black p-6 w-full max-w-lg">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">{title}</h2>
           <button
-            onClick={() => setActiveTab("comment")}
-            className={`flex items-center w-full px-6 py-3 text-sm font-medium transition-colors duration-200 ${
-              activeTab === "comment"
-                ? "bg-indigo-50 text-indigo-600 border-l-4 border-indigo-600"
-                : "hover:bg-gray-50"
-            }`}
+            onClick={onClose}
+            className="p-1 rounded-full hover:bg-zinc-100 transition-colors"
           >
-            <FiMessageSquare className="mr-3" />
-            Comments
-          </button>
-
-          <button
-            onClick={() => setActiveTab("post")}
-            className={`flex items-center w-full px-6 py-3 text-sm font-medium transition-colors duration-200 ${
-              activeTab === "post"
-                ? "bg-indigo-50 text-indigo-600 border-l-4 border-indigo-600"
-                : "hover:bg-gray-50"
-            }`}
-          >
-            <FiFileText className="mr-3" />
-            Posts
-          </button>
-
-          <button
-            onClick={() => setActiveTab("dms")}
-            className={`flex items-center w-full px-6 py-3 text-sm font-medium transition-colors duration-200 ${
-              activeTab === "dms"
-                ? "bg-indigo-50 text-indigo-600 border-l-4 border-indigo-600"
-                : "hover:bg-gray-50"
-            }`}
-          >
-            <FiSend className="mr-3" />
-            DMs
-          </button>
-        </nav>
-
-        <div className="p-4 border-t border-gray-200">
-          <button className="flex items-center w-full px-4 py-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50">
-            <FiSettings className="mr-3" />
-            Settings
+            <X className="w-5 h-5" />
           </button>
         </div>
+        <div>{children}</div>
       </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-          <h2 className="text-lg font-semibold capitalize">
-            {activeTab} Automation
-          </h2>
-          <div className="flex items-center space-x-3">
-            <div className="relative">
-              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder={`Search ${activeTab} automations...`}
-                className="pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500"
-              />
-            </div>
-            {activeTab === "comment" && (
-              <button
-                onClick={openNewAutomation}
-                className="flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
-              >
-                <FiPlus className="mr-2" />
-                New Automation
-              </button>
-            )}
-          </div>
-        </header>
-
-        {/* Content */}
-        <div className="flex-1 p-6 overflow-auto">
-          {/* Comment Automation Section */}
-          {activeTab === "comment" && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              {/* Filters */}
-              <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <button className="px-3 py-1 text-xs font-medium bg-indigo-100 text-indigo-700 rounded-full">
-                    All
-                  </button>
-                  <button className="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200">
-                    Active
-                  </button>
-                  <button className="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200">
-                    Paused
-                  </button>
-                </div>
-                <button className="flex items-center text-sm text-gray-500 hover:text-gray-700">
-                  <FiFilter className="mr-1" />
-                  Filters
-                </button>
-              </div>
-
-              {/* Automation Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Post
-                      </th>
-                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Trigger
-                      </th>
-                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Action
-                      </th>
-                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Date Added
-                      </th>
-                      <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {filteredAutomations.map((auto) => (
-                      <tr key={auto.id} className="hover:bg-gray-50">
-                        <td className="py-4 px-6 text-sm font-medium text-gray-900">
-                          <div className="flex items-center">
-                            <div className="bg-gray-200 border-2 border-dashed rounded-xl w-10 h-10 mr-3" />
-                            <div>
-                              <div className="font-medium">{auto.post}</div>
-                              <div className="text-xs text-gray-500">
-                                Social Media Post
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-4 px-6 text-sm text-gray-700">
-                          {auto.trigger}
-                        </td>
-                        <td className="py-4 px-6 text-sm text-gray-700">
-                          {auto.action}
-                        </td>
-                        <td className="py-4 px-6 text-sm">
-                          <span
-                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              auto.status === "active"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-yellow-100 text-yellow-800"
-                            }`}
-                          >
-                            {auto.status.charAt(0).toUpperCase() +
-                              auto.status.slice(1)}
-                          </span>
-                        </td>
-                        <td className="py-4 px-6 text-sm text-gray-500">
-                          {auto.date}
-                        </td>
-                        <td className="py-4 px-6 text-sm text-gray-500">
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => toggleAutomationStatus(auto.id)}
-                              className="p-1.5 rounded-md hover:bg-gray-100 text-gray-500 hover:text-gray-700"
-                              title={
-                                auto.status === "active" ? "Pause" : "Resume"
-                              }
-                            >
-                              {auto.status === "active" ? (
-                                <FaRegPauseCircle size={18} />
-                              ) : (
-                                <FaRegPlayCircle size={18} />
-                              )}
-                            </button>
-                            <button
-                              className="p-1.5 rounded-md hover:bg-gray-100 text-gray-500 hover:text-gray-700"
-                              title="Edit"
-                            >
-                              <FaRegEdit size={16} />
-                            </button>
-                            <button
-                              onClick={() => deleteAutomation(auto.id)}
-                              className="p-1.5 rounded-md hover:bg-red-50 text-gray-500 hover:text-red-600"
-                              title="Delete"
-                            >
-                              <FaRegTrashAlt size={16} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Empty State */}
-              {filteredAutomations.length === 0 && (
-                <div className="py-16 text-center">
-                  <div className="mx-auto bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-1">
-                    No comment automations yet
-                  </h3>
-                  <p className="text-gray-500 mb-6">
-                    Create your first automation to get started
-                  </p>
-                  <button
-                    onClick={openNewAutomation}
-                    className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
-                  >
-                    Create Automation
-                  </button>
-                </div>
-              )}
-
-              {/* Pagination */}
-              <div className="px-4 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
-                <div className="text-sm text-gray-700">
-                  Showing <span className="font-medium">1</span> to{" "}
-                  <span className="font-medium">
-                    {filteredAutomations.length}
-                  </span>{" "}
-                  of{" "}
-                  <span className="font-medium">
-                    {filteredAutomations.length}
-                  </span>{" "}
-                  results
-                </div>
-                <div className="flex space-x-2">
-                  <button className="px-3 py-1 text-sm text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                    Previous
-                  </button>
-                  <button className="px-3 py-1 text-sm text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                    Next
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Post Automation Section */}
-          {activeTab === "post" && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-              <div className="text-center py-12">
-                <div className="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 text-indigo-600 mb-4">
-                  <FiBarChart2 size={24} />
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">
-                  Post Automation
-                </h3>
-                <p className="text-gray-600 max-w-md mx-auto mb-8">
-                  Automate your social media posts. Schedule content, analyze
-                  performance, and optimize your posting strategy.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mb-4">
-                      <FiActivity size={20} />
-                    </div>
-                    <h4 className="font-semibold text-gray-800 mb-2">
-                      Scheduled Posts
-                    </h4>
-                    <p className="text-gray-600 text-sm">
-                      Create and schedule posts in advance for optimal
-                      engagement
-                    </p>
-                  </div>
-                  <div className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-4">
-                      <FiUsers size={20} />
-                    </div>
-                    <h4 className="font-semibold text-gray-800 mb-2">
-                      Audience Targeting
-                    </h4>
-                    <p className="text-gray-600 text-sm">
-                      Target specific audience segments for each automated post
-                    </p>
-                  </div>
-                  <div className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mb-4">
-                      <FiBarChart2 size={20} />
-                    </div>
-                    <h4 className="font-semibold text-gray-800 mb-2">
-                      Performance Analytics
-                    </h4>
-                    <p className="text-gray-600 text-sm">
-                      Track engagement metrics and optimize your posting
-                      strategy
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-10">
-                  <button className="px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors">
-                    <FiPlus className="mr-2 inline" />
-                    Create Post Automation
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* DM Automation Section */}
-          {activeTab === "dms" && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-              <div className="text-center py-12">
-                <div className="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 text-indigo-600 mb-4">
-                  <FaRegPaperPlane size={24} />
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">
-                  Direct Message Automation
-                </h3>
-                <p className="text-gray-600 max-w-md mx-auto mb-8">
-                  Automate your direct message responses. Engage with your
-                  audience instantly and efficiently.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                    <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 mb-4">
-                      <FaRegCommentDots size={20} />
-                    </div>
-                    <h4 className="font-semibold text-gray-800 mb-2">
-                      Auto Replies
-                    </h4>
-                    <p className="text-gray-600 text-sm">
-                      Set up automatic replies to common questions and messages
-                    </p>
-                  </div>
-                  <div className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                    <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 mb-4">
-                      <FiUsers size={20} />
-                    </div>
-                    <h4 className="font-semibold text-gray-800 mb-2">
-                      Lead Generation
-                    </h4>
-                    <p className="text-gray-600 text-sm">
-                      Capture leads through automated DM conversations
-                    </p>
-                  </div>
-                  <div className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-4">
-                      <FiActivity size={20} />
-                    </div>
-                    <h4 className="font-semibold text-gray-800 mb-2">
-                      Engagement Tracking
-                    </h4>
-                    <p className="text-gray-600 text-sm">
-                      Monitor response rates and engagement metrics
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-10">
-                  <button className="px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors">
-                    <FiPlus className="mr-2 inline" />
-                    Create DM Automation
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* New Comment Automation Modal */}
-      {isModalOpen && activeTab === "comment" && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold">Create Comment Automation</h3>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="p-2 rounded-full hover:bg-gray-100"
-                >
-                  <FiX size={20} />
-                </button>
-              </div>
-
-              <div className="space-y-6">
-                {/* Step 1: Select Post */}
-                <div>
-                  <h4 className="font-medium mb-3">1. Select a Post</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {posts.map((post) => (
-                      <div
-                        key={post.id}
-                        onClick={() => setSelectedPost(post)}
-                        className={`border rounded-lg p-4 cursor-pointer transition-colors ${
-                          selectedPost?.id === post.id
-                            ? "border-indigo-500 bg-indigo-50"
-                            : "border-gray-200 hover:border-indigo-300"
-                        }`}
-                      >
-                        <div className="flex items-start">
-                          <div className="bg-gray-200 border-2 border-dashed rounded-xl w-12 h-12 mr-3" />
-                          <div>
-                            <div className="font-medium">{post.title}</div>
-                            <div className="text-xs text-gray-500 mt-1">
-                              {post.content.substring(0, 60)}...
-                            </div>
-                            <div className="flex text-xs text-gray-500 mt-2">
-                              <span className="mr-3">{post.date}</span>
-                              <span className="mr-3">
-                                ❤️ {post.likes} likes
-                              </span>
-                              <span>💬 {post.comments} comments</span>
-                            </div>
-                            <div className="mt-1">
-                              <span className="text-xs px-2 py-1 bg-gray-100 rounded-full">
-                                {post.platform}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Step 2: Define Trigger */}
-                <div>
-                  <h4 className="font-medium mb-3">2. Define Trigger</h4>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="flex space-x-4 mb-4">
-                      <button
-                        onClick={() => setTriggerType("keyword")}
-                        className={`px-4 py-2 rounded-lg ${
-                          triggerType === "keyword"
-                            ? "bg-indigo-600 text-white"
-                            : "bg-white border border-gray-300"
-                        }`}
-                      >
-                        Keyword Trigger
-                      </button>
-                      <button
-                        onClick={() => setTriggerType("question")}
-                        className={`px-4 py-2 rounded-lg ${
-                          triggerType === "question"
-                            ? "bg-indigo-600 text-white"
-                            : "bg-white border border-gray-300"
-                        }`}
-                      >
-                        Question Type
-                      </button>
-                    </div>
-
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {triggerType === "keyword"
-                          ? "Enter keywords (comma separated)"
-                          : "Select question type"}
-                      </label>
-
-                      {triggerType === "keyword" ? (
-                        <input
-                          type="text"
-                          value={triggerValue}
-                          onChange={(e) => setTriggerValue(e.target.value)}
-                          placeholder="e.g. pricing, discount, features"
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
-                        />
-                      ) : (
-                        <div className="relative">
-                          <select
-                            value={triggerValue}
-                            onChange={(e) => setTriggerValue(e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded-lg appearance-none focus:ring-indigo-500 focus:border-indigo-500"
-                          >
-                            <option value="">Select question type</option>
-                            <option value="pricing">Pricing questions</option>
-                            <option value="features">Feature questions</option>
-                            <option value="support">Support questions</option>
-                            <option value="availability">
-                              Availability questions
-                            </option>
-                          </select>
-                          <FiChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="text-sm text-gray-600">
-                      {triggerType === "keyword"
-                        ? "Automation will trigger when comment contains any of these keywords"
-                        : "Automation will trigger when comment matches this question type"}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Step 3: Define Action */}
-                <div>
-                  <h4 className="font-medium mb-3">3. Define Action</h4>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="flex space-x-4 mb-4">
-                      <button
-                        onClick={() => setActionType("reply")}
-                        className={`px-4 py-2 rounded-lg ${
-                          actionType === "reply"
-                            ? "bg-indigo-600 text-white"
-                            : "bg-white border border-gray-300"
-                        }`}
-                      >
-                        Reply to Comment
-                      </button>
-                      <button
-                        onClick={() => setActionType("message")}
-                        className={`px-4 py-2 rounded-lg ${
-                          actionType === "message"
-                            ? "bg-indigo-600 text-white"
-                            : "bg-white border border-gray-300"
-                        }`}
-                      >
-                        Send Direct Message
-                      </button>
-                    </div>
-
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {actionType === "reply"
-                          ? "Your reply message"
-                          : "Direct message content"}
-                      </label>
-                      <textarea
-                        value={actionContent}
-                        onChange={(e) => setActionContent(e.target.value)}
-                        placeholder={`Enter your ${
-                          actionType === "reply" ? "reply" : "message"
-                        } content here...`}
-                        rows={4}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
-                      />
-                    </div>
-
-                    <div className="text-sm text-gray-600">
-                      {actionType === "reply"
-                        ? "This message will be posted as a reply to the matching comment"
-                        : "This message will be sent as a direct message to the user"}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex justify-end space-x-3 pt-4">
-                  <button
-                    onClick={() => setIsModalOpen(false)}
-                    className="px-6 py-2 border border-gray-300 rounded-lg"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleCreateAutomation}
-                    className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-                  >
-                    Create Automation
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
-export default AutomationDashboard;
+// ============================================================================
+// FILE: src/components/shared/StatCard.jsx
+// ============================================================================
+
+/**
+ * Displays a single statistic with an icon, label, value, and change.
+ * @param {{icon: React.ElementType, label: string, value: string, change: string, isLoading: boolean}} props
+ */
+export const StatCard = ({ icon: Icon, label, value, change, isLoading }) => {
+  if (isLoading) return <StatCard.Skeleton />;
+
+  return (
+    <Card className="p-5 flex items-center gap-4">
+      <div className="bg-zinc-100 p-3 rounded-lg">
+        <Icon className="w-6 h-6 text-black" />
+      </div>
+      <div>
+        <p className="text-sm text-zinc-600">{label}</p>
+        <div className="flex items-baseline gap-2">
+          <p className="text-2xl font-bold">{value}</p>
+          <span className="text-sm font-medium">{change}</span>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+/**
+ * A skeleton loader for the StatCard component.
+ */
+StatCard.Skeleton = () => (
+  <div className="border border-dotted border-black rounded-xl bg-white p-5 flex items-center gap-4 animate-pulse">
+    <div className="bg-zinc-200 rounded-lg w-12 h-12"></div>
+    <div className="flex-1">
+      <div className="h-4 bg-zinc-200 rounded w-3/4 mb-2"></div>
+      <div className="h-6 bg-zinc-200 rounded w-1/2"></div>
+    </div>
+  </div>
+);
+
+// ============================================================================
+// FILE: src/components/shared/SectionHeader.jsx
+// ============================================================================
+
+/**
+ * A header for a page section with a title, icon, and optional action button.
+ * @param {{icon: React.ElementType, title: string, actionText?: string, onActionClick?: () => void}} props
+ */
+export const SectionHeader = ({
+  icon: Icon,
+  title,
+  actionText,
+  onActionClick,
+}) => (
+  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+    <h2 className="text-2xl font-bold flex items-center gap-3">
+      <Icon className="w-7 h-7 text-black" />
+      {title}
+    </h2>
+    {actionText && (
+      <button
+        onClick={onActionClick}
+        className="px-4 py-2 bg-black text-white rounded-lg flex items-center gap-2 hover:bg-zinc-800 transition-colors whitespace-nowrap"
+      >
+        <Plus className="w-4 h-4" />
+        {actionText}
+      </button>
+    )}
+  </div>
+);
+
+// ============================================================================
+// FILE: src/components/layout/Sidebar.jsx
+// ============================================================================
+
+const Sidebar = () => {
+  const { user, activePage, setActivePage, closeSidebar } = useAppContext();
+
+  const handleNavClick = (path) => {
+    setActivePage(path);
+    closeSidebar(); // Close sidebar on mobile after navigation
+  };
+
+  return (
+    <aside className="w-64 border-r border-dotted border-black p-6 flex flex-col bg-white h-full">
+      <div className="flex items-center gap-3 mb-10">
+        <div className="bg-black p-2 rounded-lg">
+          <Instagram className="w-6 h-6 text-white" />
+        </div>
+        <h1 className="text-xl font-bold">InstaAuto</h1>
+      </div>
+      <nav className="flex flex-col gap-1">
+        {NAV_ITEMS.map((item) => (
+          <button
+            key={item.path}
+            onClick={() => handleNavClick(item.path)}
+            className={`flex items-center justify-between text-left gap-3 p-3 rounded-xl transition-colors w-full ${
+              activePage === item.path
+                ? "bg-black text-white"
+                : "hover:bg-zinc-100"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <item.icon className="w-5 h-5" />
+              <span>{item.label}</span>
+            </div>
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        ))}
+      </nav>
+      <div className="mt-auto p-4 bg-white rounded-xl border border-dotted border-black">
+        <div className="flex items-center gap-3">
+          <div className="bg-zinc-100 border-2 border-dashed rounded-xl w-10 h-10" />
+          <div>
+            <p className="font-medium">{user.name}</p>
+            <p className="text-sm text-zinc-600">Admin Account</p>
+          </div>
+        </div>
+        <button className="mt-3 w-full flex items-center gap-2 p-2 rounded-lg hover:bg-zinc-100 transition-colors text-left">
+          <LogOut className="w-4 h-4" />
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+  );
+};
+
+// ============================================================================
+// FILE: src/components/layout/Topbar.jsx
+// ============================================================================
+
+const Topbar = () => {
+  const { user, toggleSidebar } = useAppContext();
+  return (
+    <header className="border-b border-dotted border-black p-4 flex justify-between items-center bg-white">
+      <div className="flex items-center gap-4">
+        <button
+          onClick={toggleSidebar}
+          className="md:hidden p-2 rounded-full hover:bg-zinc-100 transition-colors"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
+        <h1 className="text-lg sm:text-2xl font-bold flex items-center gap-2">
+          <Instagram className="w-6 h-6" />
+          <span className="hidden sm:inline">Instagram Automation</span>
+        </h1>
+      </div>
+      <div className="flex items-center gap-2 sm:gap-4">
+        <button className="p-2 rounded-full hover:bg-zinc-100 transition-colors">
+          <Search className="w-5 h-5" />
+        </button>
+        <button className="p-2 rounded-full hover:bg-zinc-100 transition-colors relative">
+          <Bell className="w-5 h-5" />
+          <span className="absolute top-1 right-1 w-2 h-2 bg-black rounded-full"></span>
+        </button>
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-black flex-shrink-0"></div>
+          <div className="hidden sm:block">
+            <p className="font-medium text-sm whitespace-nowrap">{user.name}</p>
+            <p className="text-xs text-zinc-600">{user.plan} Plan</p>
+          </div>
+          <ChevronDown className="w-4 h-4 hidden sm:block" />
+        </div>
+      </div>
+    </header>
+  );
+};
+
+// ============================================================================
+// FILE: src/components/layout/AppLayout.jsx
+// ============================================================================
+
+const AppLayout = ({ children }) => {
+  const { isSidebarOpen, closeSidebar } = useAppContext();
+
+  return (
+    <div className="min-h-screen flex text-black font-sans bg-zinc-50">
+      {/* Overlay for mobile */}
+      {isSidebarOpen && (
+        <div
+          onClick={closeSidebar}
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          aria-hidden="true"
+        ></div>
+      )}
+
+      {/* Sidebar */}
+      <div
+        className={`fixed top-0 left-0 h-full z-40 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <Sidebar />
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Topbar />
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================================
+// FILE: src/pages/DashboardPage.jsx
+// ============================================================================
+
+const DashboardPage = () => {
+  const { isConnected, isConnecting, handleConnect, setActivePage } =
+    useAppContext();
+  const [stats, setStats] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      setStats([
+        {
+          label: "Engagement Rate",
+          value: "4.8%",
+          change: "+12%",
+          icon: BarChart2,
+        },
+        { label: "Followers", value: "24.5K", change: "+320", icon: User },
+        {
+          label: "Avg. Response Time",
+          value: "23 min",
+          change: "-8 min",
+          icon: MessageCircle,
+        },
+      ]);
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {isLoading ? (
+          <>
+            <StatCard.Skeleton />
+            <StatCard.Skeleton />
+            <StatCard.Skeleton />
+          </>
+        ) : (
+          stats.map((stat) => <StatCard key={stat.label} {...stat} />)
+        )}
+      </div>
+
+      <Card>
+        <div className="flex items-center gap-3 mb-3">
+          <div className="p-2 rounded-lg bg-zinc-100 text-black">
+            <Instagram className="w-5 h-5" />
+          </div>
+          <h2 className="text-xl font-bold">Instagram Connection</h2>
+        </div>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <p className="text-zinc-700">
+            {isConnected
+              ? "Your account @sarahjohnson is connected and ready for automation."
+              : "Connect your Instagram account to unlock automation features."}
+          </p>
+          <button
+            onClick={handleConnect}
+            disabled={isConnected || isConnecting}
+            className={`px-4 py-2 border border-black rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap ${
+              isConnected
+                ? "bg-zinc-100 text-black cursor-default"
+                : "hover:bg-black hover:text-white"
+            } ${isConnecting ? "opacity-75" : ""}`}
+          >
+            {isConnecting ? (
+              <>
+                <Loader2 className="animate-spin w-4 h-4" /> Connecting...
+              </>
+            ) : (
+              <>
+                {isConnected ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <ArrowRight className="w-4 h-4" />
+                )}{" "}
+                {isConnected ? "Connected" : "Connect Account"}
+              </>
+            )}
+          </button>
+        </div>
+      </Card>
+
+      <div>
+        <h2 className="text-2xl font-bold mb-4">Get Started</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card className="flex flex-col gap-4 transition-transform duration-300 hover:scale-[1.02]">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-zinc-100">
+                <MessageCircle className="w-6 h-6" />
+              </div>
+              <h2 className="text-xl font-semibold">DM Automation</h2>
+            </div>
+            <p className="text-zinc-700 flex-grow">
+              Automate your direct messaging workflow with personalized
+              responses.
+            </p>
+            <button
+              onClick={() => setActivePage(PATHS.DM_AUTOMATION)}
+              className="px-4 py-2 border border-black rounded-lg flex items-center gap-2 w-fit transition-colors hover:bg-black hover:text-white"
+            >
+              <Send className="w-4 h-4" />
+              Setup DM Flow
+            </button>
+          </Card>
+          <Card className="flex flex-col gap-4 transition-transform duration-300 hover:scale-[1.02]">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-zinc-100">
+                <FileText className="w-6 h-6" />
+              </div>
+              <h2 className="text-xl font-semibold">Post Automation</h2>
+            </div>
+            <p className="text-zinc-700 flex-grow">
+              Schedule and automate your posts for optimal engagement.
+            </p>
+            <button
+              onClick={() => setActivePage(PATHS.POST_AUTOMATION)}
+              className="px-4 py-2 border border-black rounded-lg flex items-center gap-2 w-fit transition-colors hover:bg-black hover:text-white"
+            >
+              <Calendar className="w-4 h-4" />
+              Schedule Posts
+            </button>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================================
+// FILE: src/pages/InstagramPage.jsx
+// ============================================================================
+
+const InstagramPage = () => {
+  // Other pages would be structured similarly to DashboardPage
+  return <PagePlaceholder title="Instagram" icon={Instagram} />;
+};
+
+// ... other page components would be similarly structured ...
+
+const DMAutomationPage = () => {
+  return <DM_AUTOMATION />;
+};
+
+const PostAutomationPage = () => {
+  return <POST_AUTOMATION />;
+};
+
+const CommentAutomationPage = () => {
+  return <COMMENT_AUTOMATION />;
+};
+
+const SettingsPage = () => {
+  return <PagePlaceholder title="Settings" icon={Settings} />;
+};
+
+/**
+ * A placeholder component for pages that are not fully implemented.
+ * @param {{title: string, icon: React.ElementType}} props
+ */
+const PagePlaceholder = ({ title, icon }) => (
+  <>
+    <SectionHeader icon={icon} title={title} />
+    <Card>
+      <p className="text-zinc-600 text-center py-24">
+        Content for {title} page goes here.
+      </p>
+    </Card>
+  </>
+);
+
+// ============================================================================
+// FILE: src/App.jsx
+// ============================================================================
+
+const pageMap = {
+  [PATHS.DASHBOARD]: <DashboardPage />,
+  [PATHS.INSTAGRAM]: <InstagramPage />,
+  [PATHS.DM_AUTOMATION]: <DMAutomationPage />,
+  [PATHS.POST_AUTOMATION]: <PostAutomationPage />,
+  [PATHS.COMMENT_AUTOMATION]: <CommentAutomationPage />,
+  [PATHS.SETTINGS]: <SettingsPage />,
+};
+
+const CurrentPage = () => {
+  const { activePage } = useAppContext();
+  return pageMap[activePage] || <div>404 - Page Not Found</div>;
+};
+
+function App() {
+  return (
+    <AppProvider>
+      <AppLayout>
+        <CurrentPage />
+      </AppLayout>
+    </AppProvider>
+  );
+}
+
+export default App;
