@@ -1,5 +1,6 @@
 import NextAuth from "next-auth/next";
 import TwitterProvider from "next-auth/providers/twitter";
+import FacebookProvider from "next-auth/providers/facebook";
 
 const handler = NextAuth({
   providers: [
@@ -12,6 +13,11 @@ const handler = NextAuth({
           scope: "users.read tweet.read tweet.write offline.access",
         },
       },
+    }),
+
+    FacebookProvider({
+      clientId: "1463915521308876", //process.env.INSTAGRAM_CLIENT_ID,
+      clientSecret: "53218cd7086f984ffd09e4525e70e4ea", //process.env.INSTAGRAM_CLIENT_SECRET,
     }),
   ],
   callbacks: {

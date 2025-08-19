@@ -92,7 +92,9 @@ const Page = () => {
           {/* Logo */}
           <div className="p-6 border-b border-black">
             <div className="flex justify-between items-center">
-              <h1 className="text-xl font-bold">AutomateFlow</h1>
+              <h1 className="text-xl font-bold  text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
+                AutomateFlow
+              </h1>
               <button
                 className="lg:hidden text-black hover:text-red-600"
                 onClick={() => setSidebarOpen(false)}
@@ -120,7 +122,7 @@ const Page = () => {
               </div>
               <div className="flex justify-between items-center">
                 <span className="font-medium">{user.plan}</span>
-                <span className="px-2 py-1 border border-black text-xs rounded-full">
+                <span className="px-2 py-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs rounded-full">
                   Active
                 </span>
               </div>
@@ -155,7 +157,7 @@ const Page = () => {
               <li>
                 <Link
                   href="#"
-                  className="flex items-center p-3 border border-black rounded-lg bg-black text-white"
+                  className="flex items-center p-3 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white"
                 >
                   <LayoutDashboard className="w-5 h-5 mr-3" />
                   <span>Dashboard</span>
@@ -164,7 +166,7 @@ const Page = () => {
               <li>
                 <Link
                   href="#"
-                  className="flex items-center p-3 border border-black rounded-lg hover:bg-black hover:text-white transition"
+                  className="flex items-center p-3 border border-black rounded-lg hover:bg-gradient-to-r from-pink-500 to-purple-600 hover:text-white transition hover:border-white"
                 >
                   <CreditCard className="w-5 h-5 mr-3" />
                   <span>Billing</span>
@@ -173,7 +175,7 @@ const Page = () => {
               <li>
                 <Link
                   href="#"
-                  className="flex items-center p-3 border border-black rounded-lg hover:bg-black hover:text-white transition"
+                  className="flex items-center p-3 border border-black rounded-lg hover:bg-gradient-to-r from-pink-500 to-purple-600 hover:border-white hover:text-white transition"
                 >
                   <PieChart className="w-5 h-5 mr-3" />
                   <span>Usage</span>
@@ -203,9 +205,9 @@ const Page = () => {
                   <ArrowBigLeft className="w-5 h-5" />
                   <span className="ml-1">Back</span>
                 </Link>
-                <h1 className="text-2xl sm:text-3xl font-bold">
+                <span className="text-4xl text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
                   Choose your Automation
-                </h1>
+                </span>
               </div>
               <p className="text-gray-700 pl-0 sm:pl-9">
                 Select a platform to configure automated workflows
@@ -216,14 +218,17 @@ const Page = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
               {platforms.map((platform, index) => (
                 <Link key={index} href={platform.href}>
-                  <div className="border-2 border-dashed border-black rounded-xl p-6 bg-white hover:bg-black hover:text-white transition-all shadow-md h-full">
+                  <div className="border-2 border-dashed border-transparent rounded-xl p-6 bg-white hover:bg-black hover:text-white transition-all shadow-md h-full">
                     <div className="flex items-center justify-between mb-4">
                       <platform.Icon className="w-8 h-8" />
-                      <span className="text-xs font-medium px-2 py-1 border border-black rounded-full">
+                      <span className="text-xs font-medium px-2 py-1 rounded-full text-white bg-gradient-to-r from-pink-500 to-purple-600">
                         NEW
                       </span>
                     </div>
-                    <h3 className="text-xl font-semibold">{platform.name}</h3>
+
+                    <h3 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
+                      {platform.name}
+                    </h3>
                     <p className="text-sm opacity-80 mt-2">
                       {platform.description}
                     </p>

@@ -17,7 +17,7 @@ export default function RegisterPopup() {
 
       {/* Popup Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-gradient-to-r from-pink-500 to-purple-600 flex justify-center items-center z-50">
           <div className="bg-white text-black rounded-2xl shadow-2xl w-[90%] max-w-md p-6 animate-scaleIn relative">
             {/* Close Button */}
             <button

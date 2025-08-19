@@ -340,7 +340,7 @@ const DMAutomationPage = () => {
         icon={MessageCircle}
         title="DM Automation: Welcome Message"
       >
-        <button className="px-4 py-2 bg-black text-white rounded-lg flex items-center gap-2 hover:bg-zinc-800 transition-colors">
+        <button className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg flex items-center gap-2 hover:bg-zinc-800 transition-colors">
           Save Flow
         </button>
       </SectionHeader>

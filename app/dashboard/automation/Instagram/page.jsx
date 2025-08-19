@@ -1,4 +1,6 @@
 "use client";
+import { signIn, signOut, useSession } from "next-auth/react";
+
 import React, { useState, useEffect, createContext, useContext } from "react";
 import {
   LayoutDashboard,
@@ -49,12 +51,11 @@ const PATHS = {
 };
 const NAV_ITEMS = [
   { icon: LayoutDashboard, label: "Dashboard", path: PATHS.DASHBOARD },
-  { icon: Instagram, label: "Instagram", path: PATHS.INSTAGRAM },
-  { icon: MessageCircle, label: "DM Automation", path: PATHS.DM_AUTOMATION },
-  { icon: FileText, label: "Post Automation", path: PATHS.POST_AUTOMATION },
+  { icon: MessageCircle, label: "DM ", path: PATHS.DM_AUTOMATION },
+  { icon: FileText, label: "Post ", path: PATHS.POST_AUTOMATION },
   {
     icon: MessageSquare,
-    label: "Comment Automation",
+    label: "Comment ",
     path: PATHS.COMMENT_AUTOMATION,
   },
   { icon: Settings, label: "Settings", path: PATHS.SETTINGS },
@@ -167,7 +168,9 @@ const StatCard = ({ icon: Icon, label, value, change, isLoading }) => {
       <div>
         <p className="text-sm text-zinc-600">{label}</p>
         <div className="flex items-baseline gap-2">
-          <p className="text-2xl font-bold">{value}</p>
+          <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
+            {value}
+          </p>
           <span className="text-sm font-medium">{change}</span>
         </div>
       </div>
@@ -228,12 +231,7 @@ const Sidebar = () => {
 
   return (
     <aside className="w-64 border-r border-dotted border-black p-6 flex flex-col bg-white h-full">
-      <div className="flex items-center gap-3 mb-10">
-        <div className="bg-black p-2 rounded-lg">
-          <Instagram className="w-6 h-6 text-white" />
-        </div>
-        <h1 className="text-xl font-bold">InstaAuto</h1>
-      </div>
+      <div className="flex items-center gap-3 mb-10"></div>
       <nav className="flex flex-col gap-1">
         {NAV_ITEMS.map((item) => (
           <button
@@ -241,7 +239,7 @@ const Sidebar = () => {
             onClick={() => handleNavClick(item.path)}
             className={`flex items-center justify-between text-left gap-3 p-3 rounded-xl transition-colors w-full ${
               activePage === item.path
-                ? "bg-black text-white"
+                ? "bg-gradient-to-r from-pink-500 to-purple-600 text-white"
                 : "hover:bg-zinc-100"
             }`}
           >
@@ -253,15 +251,14 @@ const Sidebar = () => {
           </button>
         ))}
       </nav>
-      <div className="mt-auto p-4 bg-white rounded-xl border border-dotted border-black">
-        <div className="flex items-center gap-3">
-          <div className="bg-zinc-100 border-2 border-dashed rounded-xl w-10 h-10" />
+      <div className="mt-4 p-4 bg-white rounded-xl border border-dotted border-black/20">
+        <div className="flex items-center justify-center gap-3">
           <div>
             <p className="font-medium">{user.name}</p>
             <p className="text-sm text-zinc-600">Admin Account</p>
           </div>
         </div>
-        <button className="mt-3 w-full flex items-center gap-2 p-2 rounded-lg hover:bg-zinc-100 transition-colors text-left">
+        <button className="mt-4 w-full flex bg-black text-white items-center gap-2 p-2 rounded-lg  transition-colors text-left">
           <LogOut className="w-4 h-4" />
           <span>Logout</span>
         </button>
@@ -286,8 +283,7 @@ const Topbar = () => {
           <Menu className="w-6 h-6" />
         </button>
         <h1 className="text-lg sm:text-2xl font-bold flex items-center gap-2">
-          <Instagram className="w-6 h-6" />
-          <span className="hidden sm:inline">Instagram Automation</span>
+          <span className="hidden sm:inline"></span>
         </h1>
       </div>
       <div className="flex items-center gap-2 sm:gap-4">
@@ -399,7 +395,9 @@ const DashboardPage = () => {
           <div className="p-2 rounded-lg bg-zinc-100 text-black">
             <Instagram className="w-5 h-5" />
           </div>
-          <h2 className="text-xl font-bold">Instagram Connection</h2>
+          <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
+            Instagram Connection
+          </h2>
         </div>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <p className="text-zinc-700">
@@ -410,9 +408,9 @@ const DashboardPage = () => {
           <button
             onClick={handleConnect}
             disabled={isConnected || isConnecting}
-            className={`px-4 py-2 border border-black rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap ${
+            className={`px-4 py-2  bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap ${
               isConnected
-                ? "bg-zinc-100 text-black cursor-default"
+                ? "bg-zinc-100 text-white cursor-default"
                 : "hover:bg-black hover:text-white"
             } ${isConnecting ? "opacity-75" : ""}`}
           >
@@ -431,6 +429,8 @@ const DashboardPage = () => {
               </>
             )}
           </button>
+
+          <button onClick={() => signIn("facebook")}>facebook</button>
         </div>
       </Card>
 
@@ -442,7 +442,9 @@ const DashboardPage = () => {
               <div className="p-2 rounded-lg bg-zinc-100">
                 <MessageCircle className="w-6 h-6" />
               </div>
-              <h2 className="text-xl font-semibold">DM Automation</h2>
+              <h2 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
+                DM Automation
+              </h2>
             </div>
             <p className="text-zinc-700 flex-grow">
               Automate your direct messaging workflow with personalized
@@ -450,7 +452,7 @@ const DashboardPage = () => {
             </p>
             <button
               onClick={() => setActivePage(PATHS.DM_AUTOMATION)}
-              className="px-4 py-2 border border-black rounded-lg flex items-center gap-2 w-fit transition-colors hover:bg-black hover:text-white"
+              className="px-4 py-2  bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center gap-2 w-fit transition-colors text-white"
             >
               <Send className="w-4 h-4" />
               Setup DM Flow
@@ -461,14 +463,16 @@ const DashboardPage = () => {
               <div className="p-2 rounded-lg bg-zinc-100">
                 <FileText className="w-6 h-6" />
               </div>
-              <h2 className="text-xl font-semibold">Post Automation</h2>
+              <h2 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
+                Post Automation
+              </h2>
             </div>
             <p className="text-zinc-700 flex-grow">
               Schedule and automate your posts for optimal engagement.
             </p>
             <button
               onClick={() => setActivePage(PATHS.POST_AUTOMATION)}
-              className="px-4 py-2 border border-black rounded-lg flex items-center gap-2 w-fit transition-colors hover:bg-black hover:text-white"
+              className="px-4 py-2  bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center gap-2 w-fit transition-colors  text-white"
             >
               <Calendar className="w-4 h-4" />
               Schedule Posts

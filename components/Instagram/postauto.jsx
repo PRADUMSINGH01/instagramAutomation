@@ -458,7 +458,7 @@ const PostAutomationPage = () => {
             setSelectedDate(new Date());
             handleAddPostClick();
           }}
-          className="px-4 py-2 bg-black text-white rounded-lg flex items-center gap-2 hover:bg-zinc-800 transition-colors"
+          className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg flex items-center gap-2 hover:bg-zinc-800 transition-colors"
         >
           <Plus className="w-4 h-4" /> Schedule Post
         </button>
