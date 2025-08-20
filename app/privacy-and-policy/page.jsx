@@ -15,7 +15,7 @@ export default function PrivacyPolicy() {
       <header className="mb-8">
         <h1 className="text-3xl font-extrabold">Privacy Policy</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Effective Date: <strong>[Effective Date]</strong>
+          Effective Date: <strong>[10-07-2025]</strong>
         </p>
         <p className="mt-4">
           This Privacy Policy explains how <strong>zapchat.world</strong> ("we",
