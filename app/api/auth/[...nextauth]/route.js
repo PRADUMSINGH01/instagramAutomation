@@ -53,7 +53,8 @@ const handler = NextAuth({
 
     async signIn({ user, account }) {
       try {
-        const uid = "yx3QhIqHZ6V9IRa81Gl9QeyAD253"; //user.email ?? `${account.provider}-${account.providerAccountId}`;
+        const uid =
+          user.id ?? `${account.provider}-${account.providerAccountId}`;
 
         // store in a subcollection: users/{uid}/socials/{provider}
         const providerRef = adminDb
