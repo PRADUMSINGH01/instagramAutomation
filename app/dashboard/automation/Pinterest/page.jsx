@@ -716,18 +716,7 @@ const PinterestDashboardPage = () => {
             To get started with scheduling pins and automating comments, you
             first need to connect your Pinterest account.
           </p>
-          <button
-            onClick={handleConnect}
-            disabled={isConnecting}
-            className="mt-6 px-6 py-3 bg-black text-white rounded-lg flex items-center gap-2 hover:bg-zinc-800 disabled:bg-zinc-400 transition-colors"
-          >
-            {isConnecting ? (
-              <Clock className="w-5 h-5 animate-spin" />
-            ) : (
-              <LinkIcon className="w-5 h-5" />
-            )}
-            {isConnecting ? "Connecting..." : "Connect to Pinterest"}
-          </button>
+          <PinterestAuthButton />
         </Card>
       </div>
     );
@@ -774,5 +763,26 @@ export default function App() {
         <PinterestDashboardPage />
       </div>
     </AppProvider>
+  );
+}
+
+import { signIn, signOut, useSession } from "next-auth/react";
+
+function PinterestAuthButton() {
+  const { data: session } = useSession();
+
+  return (
+    <div>
+      {session ? (
+        <>
+          <p>Welcome {session.user.name}</p>
+          <button onClick={() => signOut()}>Logout</button>
+        </>
+      ) : (
+        <button onClick={() => signIn("pinterest")}>
+          Login with Pinterest
+        </button>
+      )}
+    </div>
   );
 }
