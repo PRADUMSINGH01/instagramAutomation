@@ -26,18 +26,11 @@ const handler = NextAuth({
           scope:
             "user_accounts:read pins:read pins:write boards:read boards:write",
           response_type: "code",
+          redirect_uri: `${process.env.NEXTAUTH_URL}/api/auth/callback/pinterest`,
         },
       },
       token: "https://api.pinterest.com/v5/oauth/token",
       userinfo: "https://api.pinterest.com/v5/user_account",
-      profile(profile) {
-        return {
-          id: profile.id,
-          name: profile.username,
-          email: profile.email_address ?? null,
-          image: profile.profile_image,
-        };
-      },
     }),
   ],
 
