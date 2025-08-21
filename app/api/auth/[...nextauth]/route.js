@@ -1,37 +1,86 @@
 import NextAuth from "next-auth/next";
 import TwitterProvider from "next-auth/providers/twitter";
 import FacebookProvider from "next-auth/providers/facebook";
+import crypto from "crypto";
+import { adminDb } from "@/server/firebase /firebaseSetup";
+// 🔹 Simple encrypt/decrypt helpers
+const encrypt = (text) => {
+  const cipher = crypto.createCipheriv(
+    "aes-256-gcm",
+    Buffer.from(process.env.ENCRYPTION_KEY, "hex"), // 32 bytes hex
+    Buffer.alloc(16, 0) // IV (use random for higher security per write)
+  );
+  let encrypted = cipher.update(text, "utf8", "hex");
+  encrypted += cipher.final("hex");
+  return encrypted;
+};
 
 const handler = NextAuth({
   providers: [
     TwitterProvider({
       clientId: process.env.TWITTER_CLIENT_ID,
       clientSecret: process.env.TWITTER_CLIENT_SECRET,
-      version: "2.0", // enforce OAuth 2.0
+      version: "2.0",
       authorization: {
         params: {
           scope: "users.read tweet.read tweet.write offline.access",
         },
       },
     }),
-
     FacebookProvider({
-      clientId: "1463915521308876", //process.env.INSTAGRAM_CLIENT_ID,
-      clientSecret: "53218cd7086f984ffd09e4525e70e4ea", //process.env.INSTAGRAM_CLIENT_SECRET,
+      clientId: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
     }),
   ],
+
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
+        token.expiresAt = account.expires_at ? account.expires_at * 1000 : null;
+        token.provider = account.provider;
+        token.providerAccountId = account.providerAccountId;
       }
       return token;
     },
+
     async session({ session, token }) {
-      session.accessToken = token.accessToken;
-      session.refreshToken = token.refreshToken;
+      session.provider = token.provider;
+      session.providerAccountId = token.providerAccountId;
       return session;
+    },
+
+    async signIn({ user, account }) {
+      try {
+        const uid = "yx3QhIqHZ6V9IRa81Gl9QeyAD253"; //user.email ?? `${account.provider}-${account.providerAccountId}`;
+
+        // store in a subcollection: users/{uid}/socials/{provider}
+        const providerRef = adminDb
+          .collection("users")
+          .doc(uid)
+          .collection("socials")
+          .doc(account.provider);
+
+        await providerRef.set(
+          {
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+            accessToken: encrypt(account.access_token),
+            refreshToken: account.refresh_token
+              ? encrypt(account.refresh_token)
+              : null,
+            expiresAt: account.expires_at ? account.expires_at * 1000 : null,
+            updatedAt: Date.now(),
+          },
+          { merge: true }
+        );
+
+        return true;
+      } catch (err) {
+        console.error("❌ Firestore save failed:", err);
+        return false;
+      }
     },
   },
 });
