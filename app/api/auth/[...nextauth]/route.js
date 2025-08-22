@@ -5,14 +5,23 @@ import crypto from "crypto";
 import { adminDb } from "@/server/firebase /firebaseSetup";
 // 🔹 Simple encrypt/decrypt helpers
 const encrypt = (text) => {
+  const iv = crypto.randomBytes(16); // different per encryption
   const cipher = crypto.createCipheriv(
     "aes-256-gcm",
-    Buffer.from(process.env.ENCRYPTION_KEY, "hex"), // 32 bytes hex
-    Buffer.alloc(16, 0) // IV (use random for higher security per write)
+    Buffer.from(process.env.ENCRYPTION_KEY, "hex"), // 32 bytes
+    iv
   );
+
   let encrypted = cipher.update(text, "utf8", "hex");
   encrypted += cipher.final("hex");
-  return encrypted;
+
+  const authTag = cipher.getAuthTag().toString("hex");
+
+  return {
+    encryptedData: encrypted,
+    iv: iv.toString("hex"),
+    authTag,
+  };
 };
 
 const handler = NextAuth({
