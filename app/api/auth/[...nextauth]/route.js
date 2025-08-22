@@ -2,7 +2,7 @@ import NextAuth from "next-auth/next";
 import PinterestProvider from "next-auth/providers/pinterest";
 
 import crypto from "crypto";
-import { adminDb } from "@/server/firebase /firebaseSetup";
+import { adminDb } from "@/server/firebase/firebaseSetup";
 // 🔹 Simple encrypt/decrypt helpers
 const encrypt = (text) => {
   const iv = crypto.randomBytes(16); // different per encryption
