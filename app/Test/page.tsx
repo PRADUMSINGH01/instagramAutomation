@@ -2,11 +2,7 @@
 import { useEffect, useState } from "react";
 
 interface AccessTokenData {
-  Get_User_Access_token?: {
-    id?: string;
-    name?: string;
-    uid?: string;
-  };
+  uid?: string;
 }
 
 const Page = () => {
@@ -28,11 +24,7 @@ const Page = () => {
 
   console.log(accessToken);
 
-  return (
-    <div>
-  User Name: {accessToken.Get_User_Access_token?.id || "Loading..."}
-</div>
-  );
+  return <div>User Name: {accessToken?.uid || "Loading..."}</div>;
 };
 
 export default Page;

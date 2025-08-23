@@ -1,6 +1,23 @@
 import { NextResponse } from "next/server";
 import { GET_User_By_Id } from "@/server/GetUserbyId/Get_User_Id";
+
 export async function GET() {
-  const Get_User_Access_token = await GET_User_By_Id();
-  return NextResponse.json({ Get_User_Access_token });
+  try {
+    const result = await GET_User_By_Id();
+
+    if (result.success) {
+      return NextResponse.json(result.data); // returns full user doc
+    }
+
+    return NextResponse.json(
+      { error: result.msg, details: result.error },
+      { status: 400 }
+    );
+  } catch (error) {
+    console.error("Error in GET route:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
 }
