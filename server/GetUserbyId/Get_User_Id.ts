@@ -9,10 +9,10 @@ type UserResponse =
 
 export async function GET_User_By_Id(): Promise<UserResponse> {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/verifyuser`,
-      { method: "GET", headers: { "Content-Type": "application/json" } }
-    );
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/verifyuser`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
 
     if (!response.ok) {
       return { success: false, msg: "Token verification failed" };
