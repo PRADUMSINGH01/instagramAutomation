@@ -11,6 +11,7 @@ import {
 } from "firebase/auth";
 import { auth } from "@/server/firebase/Clientfire";
 import BackButton from "./buttoms/Goback";
+
 export default function Login() {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
@@ -18,9 +19,10 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [confirmationResult, setConfirmationResult] = useState(null);
+
   const recaptchaVerifierRef = useRef(null);
 
-  // Auto verify if already logged in (Firebase)
+  // Auto login check
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -39,6 +41,17 @@ export default function Login() {
     return () => unsubscribe();
   }, []);
 
+  // ✅ Initialize Recaptcha on mount (only once)
+  useEffect(() => {
+    if (!recaptchaVerifierRef.current) {
+      recaptchaVerifierRef.current = new RecaptchaVerifier(
+        auth,
+        "recaptcha-container",
+        { size: "invisible" }
+      );
+    }
+  }, []);
+
   const verifyIdTokenWithBackend = async (idToken) => {
     try {
       const response = await fetch("/api/verify-otp", {
@@ -52,7 +65,6 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        // Backend sets secure cookie with UID; now redirect
         window.location.href = "/dashboard";
       } else {
         throw new Error(data.message || "Authentication failed");
@@ -60,27 +72,11 @@ export default function Login() {
     } catch (err) {
       console.error("Token verification error:", err);
       setError(err?.message || "Verification failed");
-      // sign out locally
       try {
         await auth.signOut();
       } catch (e) {
-        console.error("Error signing out after failed verification", e);
+        console.error("Error signing out", e);
       }
-    }
-  };
-
-  const resetRecaptcha = () => {
-    try {
-      if (recaptchaVerifierRef.current) {
-        // firebase RecaptchaVerifier has clear() method but types vary
-        if (typeof recaptchaVerifierRef.current.clear === "function") {
-          recaptchaVerifierRef.current.clear();
-        }
-      }
-    } catch (e) {
-      console.warn("recaptcha clear error", e);
-    } finally {
-      recaptchaVerifierRef.current = null;
     }
   };
 
@@ -89,24 +85,22 @@ export default function Login() {
     setError("");
     setLoading(true);
 
-    // Basic phone validation: +<countrycode><number>
     if (!phone || !/^\+\d{6,15}$/.test(phone.replace(/\s+/g, ""))) {
       setError(
-        "Please enter a valid phone number with country code (e.g. +911234567890)"
+        "Enter a valid phone number with country code (e.g. +919876543210)"
       );
       setLoading(false);
       return;
     }
 
     try {
-      // Clear old recaptcha if any
-      resetRecaptcha();
-
-      recaptchaVerifierRef.current = new RecaptchaVerifier(
-        "recaptcha-container",
-        { size: "invisible" },
-        auth
-      );
+      if (!recaptchaVerifierRef.current) {
+        recaptchaVerifierRef.current = new RecaptchaVerifier(
+          auth,
+          "recaptcha-container",
+          { size: "invisible" }
+        );
+      }
 
       const confirmation = await signInWithPhoneNumber(
         auth,
@@ -119,7 +113,6 @@ export default function Login() {
     } catch (err) {
       console.error("Phone auth error:", err);
       setError(err?.message || "Failed to send verification code");
-      resetRecaptcha();
     } finally {
       setLoading(false);
     }
@@ -131,19 +124,14 @@ export default function Login() {
     setLoading(true);
 
     if (!otp || otp.length !== 6) {
-      setError("Please enter a valid 6-digit code");
+      setError("Enter a valid 6-digit code");
       setLoading(false);
       return;
     }
 
     try {
-      if (
-        !confirmationResult ||
-        typeof confirmationResult.confirm !== "function"
-      ) {
-        throw new Error(
-          "No confirmation result available. Please resend code."
-        );
+      if (!confirmationResult) {
+        throw new Error("No confirmation result. Please resend code.");
       }
 
       const result = await confirmationResult.confirm(otp);
@@ -151,7 +139,7 @@ export default function Login() {
       await verifyIdTokenWithBackend(idToken);
     } catch (err) {
       console.error("OTP verification error:", err);
-      setError(err?.message || "Invalid verification code. Please try again.");
+      setError(err?.message || "Invalid verification code");
     } finally {
       setLoading(false);
     }
@@ -182,7 +170,7 @@ export default function Login() {
           <h2 className="text-center text-3xl font-bold text-gray-900">
             Sign in
           </h2>
-          <div className=" "></div>
+          <div></div>
         </div>
 
         {error && (
@@ -207,14 +195,14 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2 rounded-md bg-pink-500  hover:bg-pink-700 text-white disabled:opacity-50"
+              className="w-full py-2 rounded-md bg-pink-500 hover:bg-pink-700 text-white disabled:opacity-50"
             >
               {loading ? "Sending code..." : "Send Verification Code"}
             </button>
           </form>
         ) : (
           <form onSubmit={handleOtpSubmit} className="space-y-4">
-            <label className="block text-sm font-medium text-white bg-gradient-to-br from-pink-500 to-blue-500">
+            <label className="block text-sm font-medium text-gray-700">
               Verification Code
             </label>
             <input
@@ -231,10 +219,7 @@ export default function Login() {
             <div className="flex gap-3">
               <button
                 type="button"
-                onClick={() => {
-                  setShowOtp(false);
-                  resetRecaptcha();
-                }}
+                onClick={() => setShowOtp(false)}
                 className="flex-1 py-2 rounded-md border"
               >
                 Back
@@ -257,11 +242,7 @@ export default function Login() {
           disabled={loading || showOtp}
           className="w-full py-2 bg-white text-gray-700 border border-gray-300 rounded-md flex items-center justify-center gap-2 shadow-sm hover:shadow-md hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <svg
-            className="h-5 w-5"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+          <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path
               d="M23.754 12.276c0-.815-.073-1.6-.21-2.353H12.24v4.455h6.484c-.28 1.446-1.123 2.67-2.39 3.49v2.9h3.867c2.265-2.084 3.553-5.15 3.553-8.492z"
               fill="#4285F4"
