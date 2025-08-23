@@ -6,7 +6,10 @@ export async function GET() {
     const result = await GET_User_By_Id();
 
     if (result.success) {
-      return NextResponse.json(result.data); // returns full user doc
+      // ✅ return only provider field (with access token)
+      const provider = result.data?.Providers || null;
+
+      return NextResponse.json({ provider });
     }
 
     return NextResponse.json(

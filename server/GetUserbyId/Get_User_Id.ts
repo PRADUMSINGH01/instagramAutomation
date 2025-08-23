@@ -1,6 +1,7 @@
 import { adminDb } from "@/server/firebase/firebaseSetup";
 interface UserData {
   id: string;
+  Providers?: any[]; // 👈 optional, safer}
 }
 type UserResponse =
   | { success: true; data: UserData }

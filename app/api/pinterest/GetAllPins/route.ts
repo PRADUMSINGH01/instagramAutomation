@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 
-const ACCESS_TOKEN = ""; //FETCH_ACCESS_TOKEN()
+async function getAccessToken() {
+  const ACCESS = fetch("/api/accesstoken");
+  return ACCESS;
+}
 
 export async function GET() {
   const FETCH_URL = `https://api.pinterest.com/v5/pins`;
+  const ACCESS_TOKEN = getAccessToken();
   try {
     const res = await fetch(FETCH_URL, {
       method: "GET",

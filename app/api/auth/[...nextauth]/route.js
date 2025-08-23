@@ -44,22 +44,22 @@ const handler = NextAuth({
   ],
 
   callbacks: {
-    async jwt({ token, account }) {
-      if (account) {
-        token.accessToken = account.access_token;
-        token.refreshToken = account.refresh_token;
-        token.expiresAt = account.expires_at ? account.expires_at * 1000 : null;
-        token.provider = account.provider;
-        token.providerAccountId = account.providerAccountId;
-      }
-      return token;
-    },
+    // async jwt({ token, account }) {
+    //   if (account) {
+    //     token.accessToken = account.access_token;
+    //     token.refreshToken = account.refresh_token;
+    //     token.expiresAt = account.expires_at ? account.expires_at * 1000 : null;
+    //     token.provider = account.provider;
+    //     token.providerAccountId = account.providerAccountId;
+    //   }
+    //   return token;
+    // },
 
-    async session({ session, token }) {
-      session.provider = token.provider;
-      session.providerAccountId = token.providerAccountId;
-      return session;
-    },
+    // async session({ session, token }) {
+    //   session.provider = token.provider;
+    //   session.providerAccountId = token.providerAccountId;
+    //   return session;
+    // },
 
     async signIn({ user, account }) {
       try {
@@ -70,7 +70,7 @@ const handler = NextAuth({
         const providerRef = adminDb
           .collection("users")
           .doc(uid)
-          .collection("socials")
+          .collection("Providers")
           .doc(account.provider);
 
         await providerRef.set(
