@@ -1,7 +1,7 @@
 // /app/api/facebook/store-token/route.ts
 
 import { NextResponse } from "next/server";
-import { adminAuth, adminDb } from "@/server/firebase /firebaseSetup"; // Your Firebase Admin SDK setup
+import { adminAuth, adminDb } from "@/server/firebase/firebaseSetup"; // Your Firebase Admin SDK setup
 
 const FB_APP_ID = process.env.FACEBOOK_CLIENT_ID;
 const FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET;

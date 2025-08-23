@@ -8,7 +8,7 @@ import {
   OAuthCredential,
   User, // Import the User type
 } from "firebase/auth";
-import { auth } from "@/server/firebase /Clientfire"; // your firebase client config
+import { auth } from "@/server/firebase/Clientfire"; // your firebase client config
 
 export default function TwitterLoginPage() {
   // State to hold the logged-in user's details

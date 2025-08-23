@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { FacebookAuthProvider, signInWithPopup, User } from "firebase/auth";
-import { auth } from "@/server/firebase /Clientfire"; // your firebase client config
+import { auth } from "@/server/firebase/Clientfire"; // your firebase client config
 
 export default function FacebookLoginPage() {
   // ✅ CORRECTED: useState syntax for a value that can be a User object or null

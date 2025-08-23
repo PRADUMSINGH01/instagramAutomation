@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminAuth, adminDb } from "@/server/firebase /firebaseSetup";
+import { adminAuth, adminDb } from "@/server/firebase/firebaseSetup";
 import jwt from "jsonwebtoken";
+
 export async function POST(req: NextRequest) {
   try {
     // --- 1. Extract Token ---
@@ -15,32 +16,31 @@ export async function POST(req: NextRequest) {
 
     // --- 2. Verify Token using Admin SDK ---
     const decodedToken = await adminAuth.verifyIdToken(idToken);
-    const { uid, phone_number } = decodedToken;
+    const { uid, phone_number, email, name } = decodedToken;
 
-    // --- 3. Generate Custom Access Token ---
-    // This is your application-specific token for frontend authentication
+    // --- 3. Generate Custom JWT (App Session Token) ---
     if (!process.env.JWT_SECRET) {
       throw new Error("JWT_SECRET environment variable not set");
     }
 
-    const accessToken = jwt.sign(
+    const appToken = jwt.sign(
       {
-        uid: decodedToken.uid,
-        email: decodedToken.email || null,
-        phone: decodedToken.phone_number || null,
+        uid,
+        email: email || null,
+        phone: phone_number || null,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" } // Token expiration time
+      { expiresIn: "7d" } // Session cookie expiration
     );
 
     // --- 4. Update/Create User in Firestore ---
     const userRef = adminDb.collection("users").doc(uid);
     await userRef.set(
       {
-        uid: uid,
-        email: decodedToken.email || null,
+        uid,
+        email: email || null,
         phoneNumber: phone_number || null,
-        displayName: decodedToken.name || "",
+        displayName: name || "",
         lastLoginAt: new Date().toISOString(),
         trail: false,
         plans: {
@@ -53,27 +53,31 @@ export async function POST(req: NextRequest) {
       { merge: true }
     );
 
-    // --- 5. Fetch Updated User Data ---
-
-    // --- 6. Success Response ---
-    return NextResponse.json(
-      {
-        success: true,
-        accessToken: accessToken,
-      },
+    // --- 5. Create Secure HttpOnly Cookie ---
+    const response = NextResponse.json(
+      { success: true, message: "Login successful" },
       { status: 200 }
     );
+
+    response.cookies.set({
+      name: "session_token",
+      value: appToken,
+      httpOnly: true,     // ❌ Not accessible via JS
+      secure: true,       // ✅ Only over HTTPS
+      sameSite: "strict", // ✅ Prevent CSRF
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    return response;
   } catch (error: unknown) {
     console.error("Login API Error:", error);
 
-    // Initialize error message
     let message = "An unexpected error occurred during login.";
     let status = 500;
 
-    // Handle specific Firebase errors
     if (typeof error === "object" && error !== null) {
       const firebaseError = error as { code?: string; message?: string };
-
       if (firebaseError.code) {
         switch (firebaseError.code) {
           case "auth/id-token-expired":

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useAuth } from "../contextUid";
 import {
   Instagram,
   Twitter,
@@ -12,12 +13,16 @@ import {
   LayoutDashboard,
   Menu,
   PinIcon,
+  Lock,
   X,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
+  const { uid, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const router = useRouter();
 
   // User data
   const user = {
@@ -62,6 +67,40 @@ const Page = () => {
       description: "Automate posts and engagement",
     },
   ];
+
+  // if (!uid) {
+  //   return (
+  //     <div className="flex min-h-screen items-center justify-center ">
+  //       <div className="relative rounded-3xl bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 p-10 text-center shadow-2xl backdrop-blur-xl border border-white/20">
+  //         {/* Icon */}
+  //         <div className="flex justify-center mb-4">
+  //           <div className="p-4 rounded-full bg-white/20 shadow-lg animate-pulse">
+  //             <Lock className="h-10 w-10 text-white" />
+  //           </div>
+  //         </div>
+
+  //         {/* Title */}
+  //         <h1 className="text-4xl font-extrabold text-white drop-shadow-lg">
+  //           Please Sign First
+  //         </h1>
+
+  //         {/* Subtitle */}
+  //         <p className="mt-4 text-lg text-white/80 max-w-md mx-auto">
+  //           You need to <span className="font-semibold">sign in</span> to unlock
+  //           your personalized dashboard and access all premium features.
+  //         </p>
+
+  //         {/* Button */}
+  //         <button
+  //           onClick={() => router.push("/Get-Start")}
+  //           className="mt-8 w-full rounded-xl bg-gradient-to-r from-pink-600 to-blue-800 px-6 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+  //         >
+  //           Go to Sign
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="flex h-screen bg-white text-black">
