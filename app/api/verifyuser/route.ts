@@ -8,7 +8,8 @@ interface PayLoad extends JwtPayload {
 export async function GET(req: NextRequest) {
   try {
     const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJYOUpEdmpYUFpHY2tKRjlrOFRMbkFBTHZjeXQyIiwiZW1haWwiOm51bGwsInBob25lIjoiKzkxNzI3MDg1NDEyMiIsImlhdCI6MTc1NTk1MjI1MCwiZXhwIjoxNzU2NTU3MDUwfQ.GB78-maga8VcjB9Uh-jbaa9hUjfHb4Cg3MLwd4mf64Q"; //req.cookies.get("session_token")?.value;
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJYOUpEdmpYUFpHY2tKRjlrOFRMbkFBTHZjeXQyIiwiZW1haWwiOm51bGwsInBob25lIjoiKzkxNzI3MDg1NDEyMiIsImlhdCI6MTc1NTk1MjI1MCwiZXhwIjoxNzU2NTU3MDUwfQ.GB78-maga8VcjB9Uh-jbaa9hUjfHb4Cg3MLwd4mf64Q" ||
+      req.cookies.get("session_token")?.value;
     if (!token) {
       throw new Error("No token found");
     }
