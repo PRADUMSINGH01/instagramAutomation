@@ -7,21 +7,19 @@ interface PayLoad extends JwtPayload {
 
 export async function GET(req: NextRequest) {
   try {
+    console.log("Cookies received:", req.cookies.getAll());
+
     const token = req.cookies.get("session_token")?.value;
-    console.log(token);
     if (!token) {
-      throw new Error("No token found");
+      throw new Error("No token found in cookies");
     }
 
     if (!process.env.JWT_SECRET) {
-      throw new Error("JWT_SECRET not set");
+      throw new Error("JWT_SECRET not set in environment variables");
     }
 
     // ✅ Verify JWT safely
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET!
-    ) as unknown as PayLoad;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as PayLoad;
 
     if (!decoded.uid) {
       throw new Error("Invalid token: uid missing");
