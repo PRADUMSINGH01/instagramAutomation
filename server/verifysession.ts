@@ -1,24 +1,29 @@
-export const verifySession = async () => {
-  const accessToken = localStorage.getItem("accessToken");
+import jwt, { JwtPayload } from "jsonwebtoken";
+import FetchCookies from "@/server/fetchCookies";
+interface PayLoad extends JwtPayload {
+  uid: string;
+}
 
-  if (!accessToken) {
-    return null;
-  }
+export async function verifysession() {
+  const token = await FetchCookies();
+
+  console.log("Fetched Token server:", token);
 
   try {
-    // Verify token with backend (optional)
-    const response = await fetch("/api/verifyuser", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    if (!token) throw new Error("No token found in cookies");
+    if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET not set");
 
-    if (response.ok) {
-      return JSON.parse(localStorage.getItem("user") || "{}");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // ✅ Ensure it's an object & has uid
+    if (typeof decoded !== "object" || !("uid" in decoded)) {
+      throw new Error("Invalid token: uid missing");
     }
-    return null;
-  } catch (error) {
-    return null;
+
+    const payload = decoded as PayLoad;
+
+    return { valid: true, uid: payload.uid, status: 200 };
+  } catch (error: any) {
+    return { valid: false, message: error.message, status: 401 };
   }
-};
+}
