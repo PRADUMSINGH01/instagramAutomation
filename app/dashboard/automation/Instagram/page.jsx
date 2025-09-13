@@ -390,50 +390,6 @@ const DashboardPage = () => {
         )}
       </div>
 
-      <Card>
-        <div className="flex items-center gap-3 mb-3">
-          <div className="p-2 rounded-lg bg-zinc-100 text-black">
-            <Instagram className="w-5 h-5" />
-          </div>
-          <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
-            Instagram Connection
-          </h2>
-        </div>
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <p className="text-zinc-700">
-            {isConnected
-              ? "Your account @sarahjohnson is connected and ready for automation."
-              : "Connect your Instagram account to unlock automation features."}
-          </p>
-          <button
-            onClick={handleConnect}
-            disabled={isConnected || isConnecting}
-            className={`px-4 py-2  bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap ${
-              isConnected
-                ? "bg-zinc-100 text-white cursor-default"
-                : "hover:bg-black hover:text-white"
-            } ${isConnecting ? "opacity-75" : ""}`}
-          >
-            {isConnecting ? (
-              <>
-                <Loader2 className="animate-spin w-4 h-4" /> Connecting...
-              </>
-            ) : (
-              <>
-                {isConnected ? (
-                  <Check className="w-4 h-4" />
-                ) : (
-                  <ArrowRight className="w-4 h-4" />
-                )}{" "}
-                {isConnected ? "Connected" : "Connect Account"}
-              </>
-            )}
-          </button>
-
-          <button onClick={() => signIn("facebook")}>facebook</button>
-        </div>
-      </Card>
-
       <div>
         <h2 className="text-2xl font-bold mb-4">Get Started</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

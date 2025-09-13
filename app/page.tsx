@@ -531,21 +531,24 @@ const InstagramAutomationLanding = () => {
           <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p>© 2025 Zapchat. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <a
+              <Link
                 href="/policy"
                 className="hover:text-pink-500 transition-colors"
               >
                 Privacy Policy
-              </a>
-              <a href="/term" className="hover:text-pink-500 transition-colors">
+              </Link>
+              <Link
+                href="/term"
+                className="hover:text-pink-500 transition-colors"
+              >
                 Terms of Service
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/policy"
                 className="hover:text-pink-500 transition-colors"
               >
                 Cookie Policy
-              </a>
+              </Link>
             </div>
           </div>
         </div>

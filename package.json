@@ -32,7 +32,8 @@
     "react-phone-number-input": "^3.4.12",
     "reactflow": "^11.11.4",
     "tailwindcss-animate": "^1.0.7",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zod": "^4.1.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Trash2,
 } from "lucide-react";
+import { getAuth } from "firebase/auth"; // expects firebase client initialized elsewhere
 
 // --- MOCK CONTEXT & HELPERS (for standalone demonstration) ---
 const StandaloneContext = createContext();
@@ -94,52 +95,140 @@ const PostEditorModal = ({
   selectedDate,
   existingPost,
 }) => {
+  // Limits should match your server constraints
+  const MAX_BYTES_IMAGE = 6 * 1024 * 1024; // 6 MB
+  const MAX_BYTES_VIDEO = 15 * 1024 * 1024; // 15 MB
+
   const [caption, setCaption] = useState("");
   const [time, setTime] = useState("10:00");
-  const [imagePreview, setImagePreview] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (existingPost) {
-      setCaption(existingPost.caption);
+      setCaption(existingPost.caption || "");
       setTime(existingPost.date.toTimeString().slice(0, 5));
-      setImagePreview(existingPost.imageUrl);
+      setPreviewUrl(existingPost.imageUrl || null);
+      setSelectedFile(null);
     } else {
-      // Reset form for new post
       setCaption("");
       setTime("10:00");
-      setImagePreview(null);
+      setPreviewUrl(null);
+      setSelectedFile(null);
     }
+    setError("");
   }, [existingPost, isOpen]);
 
+  // convert File -> dataURL
+  const fileToDataUrl = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => {
+        reader.abort();
+        reject(new Error("Problem reading file"));
+      };
+      reader.onload = () => {
+        resolve(reader.result);
+      };
+      reader.readAsDataURL(file);
+    });
+
   const handleImageChange = (e) => {
+    setError("");
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setImagePreview(URL.createObjectURL(file));
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const [hours, minutes] = time.split(":");
-    const postDate = new Date(selectedDate);
-    postDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+    setError("");
+    setLoading(true);
 
-    const postData = {
-      ...existingPost,
-      id: existingPost ? existingPost.id : Date.now(),
-      date: postDate,
-      caption,
-      imageUrl: imagePreview,
-    };
+    try {
+      // build post date
+      const [hours, minutes] = time.split(":").map((x) => parseInt(x, 10));
+      const postDate = new Date(selectedDate);
+      postDate.setHours(hours, minutes, 0, 0);
+      const scheduletime = postDate.toISOString();
 
-    onSave(postData);
-    onClose();
+      // auth token
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) throw new Error("Not authenticated. Please sign in.");
+      const idToken = await user.getIdToken(/* forceRefresh */ true);
+
+      // prepare media payload
+      let mediaPayload = null;
+      if (selectedFile) {
+        const mime = selectedFile.type || "";
+        const primary = mime.split("/")[0];
+
+        if (primary === "image" && selectedFile.size > MAX_BYTES_IMAGE) {
+          throw new Error("Image too large for direct upload (max 6 MB).");
+        }
+        if (primary === "video" && selectedFile.size > MAX_BYTES_VIDEO) {
+          // For large videos you should use signed URL flow. Here we block and ask for the signed flow.
+          throw new Error(
+            "Video too large for direct server upload. Use signed upload flow (client-side direct upload)."
+          );
+        }
+
+        // convert to data URL and send to server (small files only)
+        mediaPayload = await fileToDataUrl(selectedFile);
+      }
+
+      // Compose body
+      const body = {
+        caption,
+        media: mediaPayload ?? previewUrl ?? "", // server accepts data URI or URL
+        scheduletime,
+        requestSignedUrl: false,
+      };
+
+      const res = await fetch("/api/instagram/addpost", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json?.error || json?.message || "Upload failed");
+      }
+
+      // Build local post object (server may return canonical URL; use it if available)
+      const savedPost = {
+        id: json.id || Date.now(),
+        date: postDate,
+        caption,
+        imageUrl: json?.mediaUrl || previewUrl || "",
+      };
+
+      onSave(savedPost);
+      onClose();
+    } catch (err) {
+      const message = err?.message || String(err);
+      setError(message);
+      console.error("PostEditorModal error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={() => {
+        setError("");
+        onClose();
+      }}
       title={
         existingPost
           ? "Edit Post"
@@ -148,21 +237,22 @@ const PostEditorModal = ({
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="relative w-full h-48 border-2 border-dashed border-zinc-300 rounded-lg flex items-center justify-center bg-zinc-50 overflow-hidden">
-          {imagePreview ? (
+          {previewUrl ? (
+            // If preview is a video URL you might want to show a <video> tag — for simplicity we show img
             <img
-              src={imagePreview}
+              src={previewUrl}
               alt="Preview"
               className="h-full w-full object-cover"
             />
           ) : (
             <div className="text-center text-zinc-500">
               <ImageIcon className="mx-auto h-12 w-12" />
-              <p>Click to upload an image</p>
+              <p>Click to upload an image or short video</p>
             </div>
           )}
           <input
             type="file"
-            accept="image/*"
+            accept="image/*,video/*"
             onChange={handleImageChange}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
@@ -198,19 +288,30 @@ const PostEditorModal = ({
             className="mt-1 w-full p-2 border border-dotted border-zinc-400 rounded-lg focus:ring-1 focus:ring-black focus:border-black"
           />
         </div>
+
+        {error && <p className="text-sm text-red-600">{error}</p>}
+
         <div className="flex justify-end gap-3 pt-4">
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => {
+              setError("");
+              onClose();
+            }}
             className="px-4 py-2 border border-black rounded-lg hover:bg-zinc-100 transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
+            disabled={loading}
             className="px-4 py-2 bg-black text-white rounded-lg hover:bg-zinc-800 transition-colors"
           >
-            {existingPost ? "Save Changes" : "Schedule Post"}
+            {loading
+              ? "Saving..."
+              : existingPost
+              ? "Save Changes"
+              : "Schedule Post"}
           </button>
         </div>
       </form>
