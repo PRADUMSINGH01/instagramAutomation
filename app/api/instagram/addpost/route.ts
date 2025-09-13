@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import admin from "firebase-admin";
 import { adminDb } from "@/server/firebase/firebaseSetup"; // ensure admin app & adminDb properly initialized
+import { GET_User_By_Id } from "@/server/GetUserbyId/Get_User_Id";
 
 // ----- Config / thresholds -----
 const MAX_BYTES_IMAGE = 6 * 1024 * 1024; // 6 MB - ok to upload server-side
@@ -52,7 +53,7 @@ async function uploadBase64ToStorage(
   contentType: string
 ) {
   try {
-    const bucket = admin.storage().bucket(process.env.FIREBASE_STORAGE_BUCKET);
+    const bucket = admin.storage().bucket(process.env.STORAGEBUCKET);
     // strip header
     const commaIndex = base64.indexOf(",");
     const raw = commaIndex >= 0 ? base64.slice(commaIndex + 1) : base64;
@@ -110,7 +111,8 @@ const PostSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     // auth
-    const decodedID = await fetch("/api/verifyuser");
+    const decodedID = await GET_User_By_Id();
+    console.log(decodedID, "server post");
     // parse + validate
     let json: unknown;
     try {
