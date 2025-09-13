@@ -11,7 +11,6 @@ import {
   ChevronRight,
   Trash2,
 } from "lucide-react";
-import { getAuth } from "firebase/auth"; // expects firebase client initialized elsewhere
 
 // --- MOCK CONTEXT & HELPERS (for standalone demonstration) ---
 const StandaloneContext = createContext();
@@ -155,12 +154,6 @@ const PostEditorModal = ({
       const postDate = new Date(selectedDate);
       postDate.setHours(hours, minutes, 0, 0);
       const scheduletime = postDate.toISOString();
-
-      // auth token
-      const auth = getAuth();
-      const user = auth.currentUser;
-      if (!user) throw new Error("Not authenticated. Please sign in.");
-      const idToken = await user.getIdToken(/* forceRefresh */ true);
 
       // prepare media payload
       let mediaPayload = null;
