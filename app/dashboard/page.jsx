@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Instagram } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -7,13 +7,18 @@ export default function GridBackground() {
   const [isConnecting, setIsConnecting] = useState(false);
   const router = useRouter();
 
+  // Meta Instagram OAuth URL
+  const INSTAGRAM_AUTH_URL =
+    "https://www.instagram.com/oauth/authorize" +
+    "?client_id=4064557567091029" +
+    "&redirect_uri=https://zapchat.world/dashboard/automation/instagram" +
+    "&response_type=code" +
+    "&scope=instagram_basic,instagram_manage_messages,instagram_manage_comments,instagram_content_publish";
+
   const handleConnect = () => {
     setIsConnecting(true);
-
-    // Simulate API call (2s delay)
-    setTimeout(() => {
-      router.push("dashboard/automation/Instagram");
-    }, 2000);
+    // Redirect user to Instagram OAuth
+    window.location.href = INSTAGRAM_AUTH_URL;
   };
 
   return (
@@ -21,7 +26,7 @@ export default function GridBackground() {
       {/* Fixed Grid Background */}
       <div className="absolute inset-0 bg-[repeating-linear-gradient(to_right,#e5e7eb_0px,#e5e7eb_1px,transparent_1px,transparent_50px),repeating-linear-gradient(to_bottom,#e5e7eb_0px,#e5e7eb_1px,transparent_1px,transparent_50px)]"></div>
 
-      {/* Page Content with animated blur box */}
+      {/* Page Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen">
         <div className="px-10 py-8 rounded-3xl backdrop-blur-md bg-white/30 shadow-xl flex flex-col items-center space-y-6 animate-fadeInScale">
           <h1 className="text-4xl font-bold text-gray-800">
