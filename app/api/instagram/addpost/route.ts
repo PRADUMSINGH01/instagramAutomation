@@ -3,8 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import admin from "firebase-admin";
 import { adminDb } from "@/server/firebase/firebaseSetup"; // ensure admin app & adminDb properly initialized
-import { GET_User_By_Id } from "@/server/GetUserbyId/Get_User_Id";
-
+import { verifysession } from "@/server/verifysession";
 // ----- Config / thresholds -----
 const MAX_BYTES_IMAGE = 6 * 1024 * 1024; // 6 MB - ok to upload server-side
 const MAX_BYTES_VIDEO = 15 * 1024 * 1024; // 15 MB - small videos ok; larger -> client-side upload recommended
@@ -111,7 +110,7 @@ const PostSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     // auth
-    const decodedID = await GET_User_By_Id();
+    const decodedID = await verifysession();
     console.log(decodedID, "server post");
     // parse + validate
     let json: unknown;
@@ -250,7 +249,7 @@ export async function POST(req: NextRequest) {
     // build and save post document
     const now = admin.firestore.FieldValue.serverTimestamp();
     const postDoc = {
-      userid: decodedID,
+      userid: decodedID?.uid,
       media: mediaUrl,
       mediaType,
       caption,

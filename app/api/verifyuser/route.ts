@@ -8,8 +8,6 @@ interface PayLoad extends JwtPayload {
 export async function GET() {
   const token = await FetchCookies();
 
-  console.log("Fetched Token server:", token);
-
   try {
     if (!token) throw new Error("No token found in cookies");
     if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET not set");
